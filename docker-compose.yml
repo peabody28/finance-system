@@ -1,0 +1,10 @@
+version: "3"
+services:
+  user:
+    build:
+        context: .
+        dockerfile: ./user/Dockerfile
+    volumes:
+      - "<database_folder>:/app/db" 
+    ports:
+      - "81:80"
