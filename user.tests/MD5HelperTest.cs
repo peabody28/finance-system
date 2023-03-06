@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using System;
-using System.Security.Cryptography;
 using user.Helper;
 
 namespace user.tests
@@ -14,30 +13,55 @@ namespace user.tests
         }
 
         [Test]
-        public void HashTest([Values(null, "", " ", "password")] string? data)
+        public void NullTest()
         {
             // Arrange
+            string? data = null;
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                MD5Helper.Hash(data);
+            });
+        }
+
+        [Test]
+        public void EmptyTest()
+        {
+            // Arrange
+            string data = "";
 
             // Act
             var hash = MD5Helper.Hash(data);
 
             // Assert
-            Assert.AreEqual(hash, Hash(data));
-
+            Assert.AreEqual(hash, "D41D8CD98F00B204E9800998ECF8427E");
         }
 
-        private string Hash(string input)
+        [Test]
+        public void WhiteSpaceTest()
         {
-            if (input == null)
-                return null;
+            // Arrange
+            string data = " ";
 
-            using (MD5 md5 = MD5.Create())
-            {
-                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
+            // Act
+            var hash = MD5Helper.Hash(data);
 
-                return Convert.ToHexString(hashBytes);
-            }
+            // Assert
+            Assert.AreEqual(hash, "7215EE9C7D9DC229D2921A40E899EC5F");
+        }
+
+        [Test]
+        public void IsNotOrWhiteSpaceTest()
+        {
+            // Arrange
+            var data = "password";
+
+            // Act
+            var hash = MD5Helper.Hash(data);
+
+            // Assert
+            Assert.AreEqual(hash, "5F4DCC3B5AA765D61D8327DEB882CF99");
         }
     }
 }
