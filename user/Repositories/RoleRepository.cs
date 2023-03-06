@@ -5,16 +5,16 @@ namespace user.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly UserDbContext DbContext;
+        private readonly UserDbContext dbContext;
 
         public RoleRepository(UserDbContext userDbContext)
         {
-            DbContext = userDbContext;
+            this.dbContext = userDbContext;
         }
 
         public IRole? Get(string code)
         {
-            return DbContext.Role.FirstOrDefault(role => role.Code.Equals(code));
+            return dbContext.Role.FirstOrDefault(role => role.Code.Equals(code));
         }
     }
 }

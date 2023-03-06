@@ -8,20 +8,20 @@ namespace user.Operations
 {
     public class JwtTokenOperation : IJwtTokenOperation
     {
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration configuration;
 
         public JwtTokenOperation(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.configuration = configuration;
         }
 
         public string Generate(ClaimsIdentity identity, out DateTime expirationDate)
         {
             var now = DateTime.UtcNow;
-            var issuer = Configuration.GetSection("AuthOptions:ISSUER").Value;
-            var audience = Configuration.GetSection("AuthOptions:AUDIENCE").Value;
-            var lifetime = Configuration.GetSection("AuthOptions:LIFETIME").Get<double>();
-            var key = Configuration.GetSection("AuthOptions:KEY").Value;
+            var issuer = configuration.GetSection("AuthOptions:ISSUER").Value;
+            var audience = configuration.GetSection("AuthOptions:AUDIENCE").Value;
+            var lifetime = configuration.GetSection("AuthOptions:LIFETIME").Get<double>();
+            var key = configuration.GetSection("AuthOptions:KEY").Value;
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
             expirationDate = now.Add(TimeSpan.FromMinutes(lifetime));
 

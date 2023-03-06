@@ -10,27 +10,27 @@ namespace user.Controllers
     {
         #region [ Dependency -> Operations ]
 
-        private readonly IIdentityOperation IdentityOperation;
+        private readonly IIdentityOperation identityOperation;
 
-        private readonly IJwtTokenOperation JwtTokenOperation;
+        private readonly IJwtTokenOperation jwtTokenOperation;
 
         #endregion
 
         public AuthController(IIdentityOperation identityOperation, IJwtTokenOperation jwtTokenOperation)
         {
-            IdentityOperation = identityOperation;
-            JwtTokenOperation = jwtTokenOperation;
+            this.identityOperation = identityOperation;
+            this.jwtTokenOperation = jwtTokenOperation;
         }
 
         [HttpPost]
         public TokenModel Authozize(UserCredentialsModel model)
         {
-            var identity = IdentityOperation.Get(model.Name, model.Password);
+            var identity = identityOperation.Get(model.Name, model.Password);
             // TODO: Validation
             if (identity == null)
                 throw new BadHttpRequestException("Cannot find a user with specified credentials");
 
-            var token = JwtTokenOperation.Generate(identity, out var expirationDate);
+            var token = jwtTokenOperation.Generate(identity, out var expirationDate);
 
             return new TokenModel { AccessToken = token, ExpirationDate = expirationDate };
         }

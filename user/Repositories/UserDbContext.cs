@@ -5,11 +5,11 @@ namespace user.Repositories
 {
     public class UserDbContext : DbContext
     {
-        private readonly IConfiguration Configuration;
+        private readonly IConfiguration configuration;
 
         public UserDbContext(IConfiguration config)
         {
-            Configuration = config;
+            this.configuration = config;
         }
 
         public DbSet<UserEntity> User { get; set; }
@@ -19,7 +19,7 @@ namespace user.Repositories
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connString = Configuration.GetConnectionString("User");
+            var connString = configuration.GetConnectionString("User");
             optionsBuilder.UseSqlite(connString);
         }
 

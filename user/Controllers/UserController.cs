@@ -11,25 +11,25 @@ namespace user.Controllers
     {
         #region [ Dependency -> Repositories ]
 
-        private readonly IUserRepository UserRepository;
+        private readonly IUserRepository userRepository;
 
-        private readonly IRoleRepository RoleRepository;
+        private readonly IRoleRepository roleRepository;
 
         #endregion
 
         public UserController(IUserRepository userRepository, IRoleRepository roleRepository)
         {
-            UserRepository = userRepository;
-            RoleRepository = roleRepository;
+            this.userRepository = userRepository;
+            this.roleRepository = roleRepository;
         }
 
         [HttpPost]
         public UserModel Create(UserCreateModel model)
         {
-            var role = RoleRepository.Get(model.RoleCode);
+            var role = roleRepository.Get(model.RoleCode);
             var passwordHash = MD5Helper.Hash(model.Password);
 
-            var user = UserRepository.Create(model.Name, passwordHash, role);
+            var user = userRepository.Create(model.Name, passwordHash, role);
 
             return new UserModel { Name = user.Name, RoleCode = role.Code };
         }

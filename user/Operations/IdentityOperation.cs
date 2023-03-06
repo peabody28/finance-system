@@ -7,17 +7,17 @@ namespace user.Operations
 {
     public class IdentityOperation : IIdentityOperation
     {
-        private readonly IUserRepository UserRepository;
+        private readonly IUserRepository userRepository;
 
         public IdentityOperation(IUserRepository userRepository)
         {
-            UserRepository = userRepository;
+            this.userRepository = userRepository;
         }
 
         public ClaimsIdentity? Get(string name, string password)
         {
             var passwordHash = MD5Helper.Hash(password);
-            var user = UserRepository.Get(name, passwordHash);
+            var user = userRepository.Get(name, passwordHash);
 
             if (user == null) return null;
 
