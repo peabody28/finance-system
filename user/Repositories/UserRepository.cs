@@ -37,5 +37,10 @@ namespace user.Repositories
         {
             return dbContext.User.Include(user => user.Role).FirstOrDefault(user => user.Name.Equals(name) && user.PasswordHash.Equals(passwordHash));
         }
+
+        public IUser? Get(string name)
+        {
+            return dbContext.User.Include(user => user.Role).FirstOrDefault(user => user.Name.Equals(name));
+        }
     }
 }

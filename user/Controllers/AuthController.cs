@@ -26,10 +26,6 @@ namespace user.Controllers
         public TokenModel Authozize(UserCredentialsModel model)
         {
             var identity = identityOperation.Get(model.Name, model.Password);
-            // TODO: Validation
-            if (identity == null)
-                throw new BadHttpRequestException("Cannot find a user with specified credentials");
-
             var token = jwtTokenOperation.Generate(identity, out var expirationDate);
 
             return new TokenModel { AccessToken = token, ExpirationDate = expirationDate };

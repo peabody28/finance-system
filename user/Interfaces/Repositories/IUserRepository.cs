@@ -7,5 +7,7 @@ namespace user.Interfaces.Repositories
         IUser? Create(string name, string paswordHash, IRole role);
 
         IUser? Get(string name, string passwordHash);
+
+        IUser? Get(string name);
     }
 }

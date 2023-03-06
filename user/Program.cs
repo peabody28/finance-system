@@ -1,3 +1,6 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using System.ComponentModel.DataAnnotations;
 using user.Entities;
 using user.Interfaces.Entities;
 using user.Interfaces.Operations;
@@ -21,6 +24,12 @@ builder.Services.AddTransient<IRole, RoleEntity>();
 builder.Services.AddScoped<IIdentityOperation, IdentityOperation>();
 builder.Services.AddScoped<IJwtTokenOperation, JwtTokenOperation>();
 
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.StopOnFirstFailure;
 
 var app = builder.Build();
 
