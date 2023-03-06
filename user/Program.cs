@@ -1,6 +1,8 @@
 using user.Entities;
 using user.Interfaces.Entities;
+using user.Interfaces.Operations;
 using user.Interfaces.Repositories;
+using user.Operations;
 using user.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddTransient<IUser, UserEntity>();
 builder.Services.AddTransient<IRole, RoleEntity>();
+
+builder.Services.AddScoped<IIdentityOperation, IdentityOperation>();
+builder.Services.AddScoped<IJwtTokenOperation, JwtTokenOperation>();
 
 
 var app = builder.Build();

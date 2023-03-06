@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using user.Models.Auth;
 
 namespace user.Models.User
 {
