@@ -7,7 +7,7 @@ namespace user.Operations
 {
     public class IdentityOperation : IIdentityOperation
     {
-        public IUserRepository UserRepository { get; set; }
+        private readonly IUserRepository UserRepository;
 
         public IdentityOperation(IUserRepository userRepository)
         {

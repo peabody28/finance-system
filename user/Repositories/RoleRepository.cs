@@ -5,7 +5,7 @@ namespace user.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private UserDbContext DbContext { get; set; }
+        private readonly UserDbContext DbContext;
 
         public RoleRepository(UserDbContext userDbContext)
         {

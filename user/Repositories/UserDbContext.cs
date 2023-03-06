@@ -5,7 +5,7 @@ namespace user.Repositories
 {
     public class UserDbContext : DbContext
     {
-        private IConfiguration Configuration { get; set; }
+        private readonly IConfiguration Configuration;
 
         public UserDbContext(IConfiguration config)
         {

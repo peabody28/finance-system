@@ -10,9 +10,9 @@ namespace user.Controllers
     {
         #region [ Dependency -> Operations ]
 
-        public IIdentityOperation IdentityOperation { get; set; }
+        private readonly IIdentityOperation IdentityOperation;
 
-        public IJwtTokenOperation JwtTokenOperation { get; set; }
+        private readonly IJwtTokenOperation JwtTokenOperation;
 
         #endregion
 

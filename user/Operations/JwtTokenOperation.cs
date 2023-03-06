@@ -8,7 +8,7 @@ namespace user.Operations
 {
     public class JwtTokenOperation : IJwtTokenOperation
     {
-        public IConfiguration Configuration { get; set; }
+        private readonly IConfiguration Configuration;
 
         public JwtTokenOperation(IConfiguration configuration)
         {

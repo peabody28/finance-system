@@ -7,9 +7,9 @@ namespace user.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private UserDbContext DbContext { get; set; }
+        private readonly UserDbContext DbContext;
 
-        private IServiceProvider ServiceProvider { get; set; }
+        private readonly IServiceProvider ServiceProvider;
 
         public UserRepository(UserDbContext userDbContext, IServiceProvider serviceProvider)
         {

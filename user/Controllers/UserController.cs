@@ -11,9 +11,9 @@ namespace user.Controllers
     {
         #region [ Dependency -> Repositories ]
 
-        public IUserRepository UserRepository { get; set; }
+        private readonly IUserRepository UserRepository;
 
-        public IRoleRepository RoleRepository { get; set; }
+        private readonly IRoleRepository RoleRepository;
 
         #endregion
 
