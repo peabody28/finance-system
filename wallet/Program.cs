@@ -27,6 +27,7 @@ builder.Services.AddTransient<ICurrency, CurrencyEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
 
 builder.Services.AddScoped<IWalletOperation, WalletOperation>();
+builder.Services.AddScoped<IUserOperation, UserOperation>();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();

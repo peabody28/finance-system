@@ -11,18 +11,6 @@ namespace wallet.Controllers
     [Route("[controller]")]
     public class WalletController : ControllerBase
     {
-        private IUser? CurrentUser 
-        { 
-            get
-            {
-                var name = Request.HttpContext.User?.Identity?.Name;
-                if (string.IsNullOrWhiteSpace(name))
-                    return null;
-
-                return userRepository.Get(name);
-            }
-        }
-
         private readonly IUserRepository userRepository;
 
         private readonly ICurrencyRepository currencyRepository;
@@ -31,26 +19,30 @@ namespace wallet.Controllers
 
         private readonly IWalletOperation walletOperation;
 
-        public WalletController(IUserRepository userRepository, ICurrencyRepository currencyRepository, IWalletRepository walletRepository, IWalletOperation walletOperation)
+        private readonly IUserOperation userOperation;
+
+        public WalletController(IUserRepository userRepository, ICurrencyRepository currencyRepository, IWalletRepository walletRepository, IWalletOperation walletOperation, IUserOperation userOperation)
         {
             this.userRepository = userRepository;
             this.currencyRepository = currencyRepository;
             this.walletRepository = walletRepository;
             this.walletOperation = walletOperation;
+            this.userOperation = userOperation;
         }
 
         [Authorize]
         [HttpPost]
         public WalletModel Create(WalletCreateModel model)
         {
+            var user = userOperation.CurrentUser;
             var currency = currencyRepository.Get(model.CurrencyCode);
             // TODO: Fix
-            if (CurrentUser == null)
+            if (user == null)
                 userRepository.Create(Request.HttpContext.User.Identity.Name);
             
             var walletNumber = walletOperation.GenerateNumber();
 
-            var wallet = walletRepository.Create(CurrentUser, currency, walletNumber);
+            var wallet = walletRepository.Create(user, currency, walletNumber);
 
             return new WalletModel { Number = wallet.Number, CurrencyCode = wallet.Currency.Code };
         }
@@ -59,7 +51,7 @@ namespace wallet.Controllers
         [HttpGet]
         public IEnumerable<WalletModel> Get()
         {
-            var wallets = walletRepository.Get(CurrentUser);
+            var wallets = walletRepository.Get(userOperation.CurrentUser);
 
             return wallets.Select(wallet => new WalletModel { Number = wallet.Number, CurrencyCode = wallet.Currency.Code });
         }
@@ -69,7 +61,7 @@ namespace wallet.Controllers
         [Route("{number}")]
         public WalletModel Get([FromRoute] WalletRequestModel model)
         {
-            var wallet = walletRepository.Get(CurrentUser, model.Number);
+            var wallet = walletRepository.Get(userOperation.CurrentUser, model.Number);
 
             return new WalletModel { Number = wallet.Number, CurrencyCode = wallet.Currency.Code };
         }

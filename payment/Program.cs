@@ -1,8 +1,12 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using payment.Entities;
 using payment.Interfaces.Entities;
+using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
+using payment.Operations;
 using payment.Repositories;
 using System.Text;
 
@@ -22,6 +26,7 @@ builder.Services.AddTransient<IBalanceOperationType, BalanceOperationTypeEntity>
 builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
 
+builder.Services.AddScoped<IWalletApiOperation, WalletApiOperation>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -36,6 +41,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
     };
 });
+
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.StopOnFirstFailure;
 
 var app = builder.Build();
 
