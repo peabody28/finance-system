@@ -1,15 +1,10 @@
-﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using payment.Entities;
+using payment.Interfaces.Entities;
+using payment.Interfaces.Repositories;
+using payment.Repositories;
 using System.Text;
-using wallet.Entities;
-using wallet.Interfaces.Entities;
-using wallet.Interfaces.Operations;
-using wallet.Interfaces.Repositories;
-using wallet.Operations;
-using wallet.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,25 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<WalletDbContext>();
-builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddDbContext<PaymentDbContext>();
+builder.Services.AddScoped<IBalanceOperationTypeRepository, BalanceOperationTypeRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 
-builder.Services.AddTransient<IUser, UserEntity>();
-builder.Services.AddTransient<ICurrency, CurrencyEntity>();
+builder.Services.AddTransient<IBalanceOperationType, BalanceOperationTypeEntity>();
+builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
 
-builder.Services.AddScoped<IWalletOperation, WalletOperation>();
-
-// FluentValidation
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
-ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.StopOnFirstFailure;
-
-builder.Services.AddAuthorization();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -57,7 +43,6 @@ var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 

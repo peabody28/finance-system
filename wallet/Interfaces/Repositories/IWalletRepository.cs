@@ -7,5 +7,7 @@ namespace wallet.Interfaces.Repositories
         IWallet Create(IUser user, ICurrency currency, string number);
 
         IEnumerable<IWallet> Get(IUser user);
+
+        IWallet? Get(IUser user, string number);
     }
 }
