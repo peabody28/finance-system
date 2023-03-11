@@ -21,12 +21,15 @@ builder.Services.AddDbContext<PaymentDbContext>();
 builder.Services.AddScoped<IBalanceOperationTypeRepository, BalanceOperationTypeRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
 
 builder.Services.AddTransient<IBalanceOperationType, BalanceOperationTypeEntity>();
 builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
+builder.Services.AddTransient<payment.Interfaces.Entities.IConfiguration, ConfigurationEntity>();
 
 builder.Services.AddScoped<IWalletApiOperation, WalletApiOperation>();
+builder.Services.AddScoped<IConfigurationOperation, ConfigurationOperation>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

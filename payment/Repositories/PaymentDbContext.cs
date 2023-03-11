@@ -18,6 +18,8 @@ namespace payment.Repositories
 
         public DbSet<PaymentEntity> Payment { get; set; }
 
+        public DbSet<ConfigurationEntity> Configuration { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

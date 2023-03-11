@@ -9,12 +9,12 @@ namespace payment.Operations
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        private readonly IConfiguration configuration;
+        private readonly IConfigurationOperation configurationOperation;
 
-        public WalletApiOperation(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public WalletApiOperation(IHttpContextAccessor httpContextAccessor, IConfigurationOperation configurationOperation)
         {
             this.httpContextAccessor = httpContextAccessor;
-            this.configuration = configuration;
+            this.configurationOperation = configurationOperation;
         }
 
         public bool IsWalletExist(string number)
@@ -24,7 +24,7 @@ namespace payment.Operations
             var headers = new Dictionary<string, string>();
             headers.Add(HeaderNames.Authorization, httpContextAccessor.HttpContext.Request.Headers.Authorization);
 
-            var walletServiceUrl = configuration.GetValue<string>("Route:Wallet");
+            var walletServiceUrl = configurationOperation.Get<string>("WALLET_MS_ROUTE");
 
             var url = string.Concat(walletServiceUrl, number);
 

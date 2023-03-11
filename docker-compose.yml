@@ -5,6 +5,24 @@ services:
         context: .
         dockerfile: ./user/Dockerfile
     volumes:
-      - "<database_folder>:/app/db" 
+      - "./db:/app/db" 
     ports:
       - "81:80"
+      
+  wallet:
+    build:
+        context: .
+        dockerfile: ./wallet/Dockerfile
+    volumes:
+      - "./db:/app/db" 
+    ports:
+      - "82:80"
+      
+  payment:
+    build:
+        context: .
+        dockerfile: ./payment/Dockerfile
+    volumes:
+      - "./db:/app/db" 
+    ports:
+      - "83:80"
