@@ -13,6 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wallet.tests", "wallet.test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payment", "payment\payment.csproj", "{66A91501-8300-4892-BD8E-B4F1CE352D3C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{88234A52-111F-4714-9D38-793519DC8724}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

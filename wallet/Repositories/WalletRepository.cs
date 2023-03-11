@@ -39,6 +39,11 @@ namespace wallet.Repositories
             return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency).Where(w => w.User.Equals(user)).ToList();
         }
 
+        public IWallet? Get(string number)
+        {
+            return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency).FirstOrDefault(w => w.Number.Equals(number));
+        }
+
         public IWallet? Get(IUser user, string number)
         {
             return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency)

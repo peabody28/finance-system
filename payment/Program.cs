@@ -6,8 +6,10 @@ using payment.Entities;
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
+using payment.Interfaces.Validations;
 using payment.Operations;
 using payment.Repositories;
+using payment.Validations;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,7 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
 
+
 builder.Services.AddTransient<IBalanceOperationType, BalanceOperationTypeEntity>();
 builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
@@ -30,6 +33,10 @@ builder.Services.AddTransient<payment.Interfaces.Entities.IConfiguration, Config
 
 builder.Services.AddScoped<IWalletApiOperation, WalletApiOperation>();
 builder.Services.AddScoped<IConfigurationOperation, ConfigurationOperation>();
+builder.Services.AddScoped<IBalanceOperationTypeOperation, BalanceOperationTypeOperation>();
+builder.Services.AddScoped<IPaymentOperation, PaymentOperation>();
+
+builder.Services.AddScoped<IWalletValidation, WalletValidation>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

@@ -8,6 +8,8 @@ namespace wallet.Interfaces.Repositories
 
         IEnumerable<IWallet> Get(IUser user);
 
+        IWallet? Get(string number);
+
         IWallet? Get(IUser user, string number);
     }
 }

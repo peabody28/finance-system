@@ -1,4 +1,5 @@
 ﻿using http.helper.Operations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
 using payment.Interfaces.Operations;
 using System.Net;
@@ -7,13 +8,10 @@ namespace payment.Operations
 {
     public class WalletApiOperation : IWalletApiOperation
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
-
         private readonly IConfigurationOperation configurationOperation;
 
-        public WalletApiOperation(IHttpContextAccessor httpContextAccessor, IConfigurationOperation configurationOperation)
+        public WalletApiOperation(IConfigurationOperation configurationOperation)
         {
-            this.httpContextAccessor = httpContextAccessor;
             this.configurationOperation = configurationOperation;
         }
 
@@ -22,7 +20,8 @@ namespace payment.Operations
             var requestOperation = new RequestOperation();
 
             var headers = new Dictionary<string, string>();
-            headers.Add(HeaderNames.Authorization, httpContextAccessor.HttpContext.Request.Headers.Authorization);
+            var clientToken = configurationOperation.Get<string>("CLIENT_TOKEN");
+            headers.Add(HeaderNames.Authorization, string.Concat(JwtBearerDefaults.AuthenticationScheme, " ", clientToken));
 
             var walletServiceUrl = configurationOperation.Get<string>("WALLET_MS_ROUTE");
 

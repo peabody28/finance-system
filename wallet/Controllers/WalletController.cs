@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using wallet.Interfaces.Entities;
+using wallet.Constants;
 using wallet.Interfaces.Operations;
 using wallet.Interfaces.Repositories;
 using wallet.Models.Wallet;
@@ -56,12 +56,12 @@ namespace wallet.Controllers
             return wallets.Select(wallet => new WalletModel { Number = wallet.Number, CurrencyCode = wallet.Currency.Code });
         }
 
-        [Authorize]
+        [Authorize(Roles = RoleConstants.MS)]
         [HttpGet]
         [Route("{number}")]
         public WalletModel Get([FromRoute] WalletRequestModel model)
         {
-            var wallet = walletRepository.Get(userOperation.CurrentUser, model.Number);
+            var wallet = walletRepository.Get(model.Number);
 
             return new WalletModel { Number = wallet.Number, CurrencyCode = wallet.Currency.Code };
         }

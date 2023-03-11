@@ -9,12 +9,9 @@ namespace wallet.Validators.Wallet
     {
         private readonly IWalletRepository walletRepository;
 
-        private readonly IUserOperation userOperation;
-
-        public WalletRequestValidator(IWalletRepository walletRepository, IUserOperation userOperation)
+        public WalletRequestValidator(IWalletRepository walletRepository)
         {
             this.walletRepository = walletRepository;
-            this.userOperation = userOperation;
 
             RuleFor(model => model)
                 .Custom(ValidateWalletNumber);
@@ -22,7 +19,7 @@ namespace wallet.Validators.Wallet
 
         private void ValidateWalletNumber(WalletRequestModel model, ValidationContext<WalletRequestModel> context)
         {
-            var wallet = walletRepository.Get(userOperation.CurrentUser, model.Number);
+            var wallet = walletRepository.Get(model.Number);
             if(wallet == null)
                 context.AddFailure(nameof(model.Number), "Cannot find a wallet with specified number");
         }

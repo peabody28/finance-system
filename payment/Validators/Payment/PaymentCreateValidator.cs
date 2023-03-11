@@ -1,30 +1,22 @@
 ﻿using FluentValidation;
-using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
+using payment.Interfaces.Validations;
 using payment.Models.Payment;
+using validation.helper.Extensions;
 
 namespace payment.Validators.Payment
 {
     public class PaymentCreateValidator : AbstractValidator<PaymentCreateModel>
     {
-        private readonly IWalletApiOperation walletApiOperation;
-
         private readonly IBalanceOperationTypeRepository balanceOperationTypeRepository;
 
-        public PaymentCreateValidator(IWalletApiOperation walletApiOperation, IBalanceOperationTypeRepository balanceOperationTypeRepository)
+        public PaymentCreateValidator(IWalletValidation walletValidation, IBalanceOperationTypeRepository balanceOperationTypeRepository)
         {
-            this.walletApiOperation = walletApiOperation;
             this.balanceOperationTypeRepository = balanceOperationTypeRepository;
 
             RuleFor(model => model)
                 .Custom(ValidateBalanceOperationType)
-                .Custom(ValidateWalletNumber);
-        }
-
-        public void ValidateWalletNumber(PaymentCreateModel model, ValidationContext<PaymentCreateModel> context)
-        {
-            if (!walletApiOperation.IsWalletExist(model.WalletNumber))
-                context.AddFailure(nameof(model.WalletNumber), "Wallet number does not exists");
+                .Custom((model, context) => context.AddFailures(nameof(model.WalletNumber), walletValidation.Validate(model.WalletNumber)));
         }
 
         public void ValidateBalanceOperationType(PaymentCreateModel model, ValidationContext<PaymentCreateModel> context)

@@ -5,15 +5,15 @@ using payment.Interfaces.Repositories;
 
 namespace payment.Repositories
 {
-    public class PaymentRepository : IPaymentRepository
+    public class PaymentRepository : RepositoryBase, IPaymentRepository
     {
         private readonly PaymentDbContext dbContext;
 
         private readonly IServiceProvider serviceProvider;
 
-        public PaymentRepository(PaymentDbContext paymentDbContext, IServiceProvider serviceProvider)
+        public PaymentRepository(PaymentDbContext paymentDbContext, IServiceProvider serviceProvider) : base(paymentDbContext)
         {
-            dbContext = paymentDbContext;
+            this.dbContext = paymentDbContext;
             this.serviceProvider = serviceProvider;
         }
 
@@ -34,10 +34,10 @@ namespace payment.Repositories
             return payment.Entity;
         }
 
-        public IPayment? Get(IWallet wallet, IBalanceOperationType? balanceOperationType = null)
+        public IEnumerable<IPayment> Get(IWallet wallet, IBalanceOperationType? balanceOperationType = null)
         {
-            return dbContext.Payment.FirstOrDefault(p => p.Wallet.Equals(wallet) &&
-                (balanceOperationType == null || p.BalanceOperationType.Equals(balanceOperationType)));
+            return dbContext.Payment.Include(p => p.BalanceOperationType).Include(p => p.Wallet).Where(p => p.Wallet.Equals(wallet) &&
+                (balanceOperationType == null || p.BalanceOperationType.Equals(balanceOperationType))).ToList();
         }
     }
 }

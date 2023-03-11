@@ -1,6 +1,6 @@
 version: "3"
 services:
-  user:
+  api.user:
     build:
         context: .
         dockerfile: ./user/Dockerfile
@@ -9,7 +9,7 @@ services:
     ports:
       - "81:80"
       
-  wallet:
+  api.wallet:
     build:
         context: .
         dockerfile: ./wallet/Dockerfile
@@ -18,7 +18,7 @@ services:
     ports:
       - "82:80"
       
-  payment:
+  api.payment:
     build:
         context: .
         dockerfile: ./payment/Dockerfile
