@@ -7,7 +7,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["currency/currency.csproj", "currency/"]
-RUN dotnet restore "currency/currency.csproj"
+RUN dotnet restore -s "http://nuget.peabody28.com/v3/index.json" -s "https://api.nuget.org/v3/index.json" "currency/currency.csproj"
 COPY . .
 WORKDIR "/src/currency"
 RUN dotnet build "currency.csproj" -c Release -o /app/build
