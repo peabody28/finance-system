@@ -26,3 +26,12 @@ services:
       - "./db:/app/db" 
     ports:
       - "83:80"
+
+  api.currency:
+    build:
+        context: .
+        dockerfile: ./currency/Dockerfile
+    volumes:
+      - "./db:/app/db" 
+    ports:
+      - "84:80"
