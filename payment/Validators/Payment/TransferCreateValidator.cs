@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using payment.Interfaces.Validations;
 using payment.Models.Payment;
-using validation.helper.Extensions;
+using Validation.Helper.Extensions;
 
 namespace payment.Validators.Payment
 {

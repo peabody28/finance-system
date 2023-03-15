@@ -1,6 +1,6 @@
 ﻿using currency.Interfaces.Repositories;
 using currency.Interfaces.Validations;
-using validation.helper.Extensions;
+using Validation.Helper.Extensions;
 
 namespace currency.Validations
 {

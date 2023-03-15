@@ -12,13 +12,13 @@ namespace payment.Operations
             this.configurationRepository = configurationRepository;
         }
 
-        public T Get<T>(string key)
+        public T? Get<T>(string key)
         {
             var configuration = configurationRepository.Get(key);
             if (configuration == null)
                 return default(T);
 
-            return (T)Convert.ChangeType(configuration.Value, typeof(T));
+            return (T?)Convert.ChangeType(configuration.Value, typeof(T));
         }
     }
 }

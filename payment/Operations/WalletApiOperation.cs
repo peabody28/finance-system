@@ -1,35 +1,47 @@
-﻿using http.helper.Operations;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Net.Http.Headers;
+﻿using Http.Helper.Operations;
+using Newtonsoft.Json;
+using payment.Constants;
 using payment.Interfaces.Operations;
+using payment.Models.DTO.Wallet;
 using System.Net;
 
 namespace payment.Operations
 {
-    public class WalletApiOperation : IWalletApiOperation
+    public class WalletApiOperation : ApiOperationBase, IWalletApiOperation
     {
-        private readonly IConfigurationOperation configurationOperation;
+        protected override string? Route => configurationOperation.Get<string>(RouteConstants.WALLET_MS_ROUTE);
 
-        public WalletApiOperation(IConfigurationOperation configurationOperation)
-        {
-            this.configurationOperation = configurationOperation;
-        }
+        public WalletApiOperation(IConfigurationOperation configurationOperation) : base(configurationOperation) { }
 
         public bool IsWalletExist(string number)
         {
             var requestOperation = new RequestOperation();
 
-            var headers = new Dictionary<string, string>();
-            var clientToken = configurationOperation.Get<string>("CLIENT_TOKEN");
-            headers.Add(HeaderNames.Authorization, string.Concat(JwtBearerDefaults.AuthenticationScheme, " ", clientToken));
+            var url = string.Concat(Route, number);
 
-            var walletServiceUrl = configurationOperation.Get<string>("WALLET_MS_ROUTE");
+            var response = requestOperation.Get(url, null, AuthorizationHeaders).Result;
 
-            var url = string.Concat(walletServiceUrl, number);
+            return response.StatusCode.Equals(HttpStatusCode.OK);
+        }
 
-            var statusCode = requestOperation.Get(url, null, headers).Result;
+        /// <summary>
+        /// Get currency code of wallet from external source by number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public string? CurrencyCode(string number)
+        {
+            var requestOperation = new RequestOperation();
 
-            return statusCode.Equals(HttpStatusCode.OK);
+            var url = string.Concat(Route, number);
+
+            var response = requestOperation.Get(url, null, AuthorizationHeaders).Result;
+
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+
+            var walletModel = JsonConvert.DeserializeObject<WalletDtoModel>(responseContent);
+
+            return walletModel?.CurrencyCode;
         }
     }
 }

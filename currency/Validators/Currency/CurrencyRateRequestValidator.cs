@@ -1,7 +1,7 @@
 ﻿using currency.Interfaces.Validations;
 using currency.Models;
 using FluentValidation;
-using validation.helper.Extensions;
+using Validation.Helper.Extensions;
 
 namespace currency.Validators.Currency
 {
