@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
+using payment.Constants;
 using payment.Interfaces.Operations;
 
 namespace payment.Operations
@@ -7,7 +8,7 @@ namespace payment.Operations
     public abstract class ApiOperationBase
     {
         protected abstract string? Route { get; }
-        protected virtual string? ClientToken => configurationOperation.Get<string>("CLIENT_TOKEN");
+        protected virtual string? ClientToken => configurationOperation.Get<string>(ConfigurationConstants.CLIENT_TOKEN);
 
 
         protected readonly IConfigurationOperation configurationOperation;

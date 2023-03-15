@@ -9,7 +9,7 @@ namespace payment.Operations
 {
     public class WalletApiOperation : ApiOperationBase, IWalletApiOperation
     {
-        protected override string? Route => configurationOperation.Get<string>(RouteConstants.WALLET_MS_ROUTE);
+        protected override string? Route => configurationOperation.Get<string>(ConfigurationConstants.WALLET_MS_ROUTE);
 
         public WalletApiOperation(IConfigurationOperation configurationOperation) : base(configurationOperation) { }
 

@@ -8,7 +8,7 @@ namespace payment.Operations
 {
     public class CurrencyApiOperation : ApiOperationBase, ICurrencyApiOperation
     {
-        protected override string? Route => configurationOperation.Get<string>(RouteConstants.CURRENCY_MS_ROUTE);
+        protected override string? Route => configurationOperation.Get<string>(ConfigurationConstants.CURRENCY_MS_ROUTE);
 
         public CurrencyApiOperation(IConfigurationOperation configurationOperation) : base(configurationOperation) { }
 
@@ -20,7 +20,9 @@ namespace payment.Operations
             data.Add("currencyFromCode", currencyFromCode);
             data.Add("currencyToCode", currencyToCode);
 
-            var response = requestOperation.Get(Route, data, AuthorizationHeaders).Result;
+            var url = string.Concat(Route, RouteConstants.CurrencyRateRoutePostfix);
+
+            var response = requestOperation.Get(url, data, AuthorizationHeaders).Result;
 
             var responseContent = response.Content.ReadAsStringAsync().Result;
 
