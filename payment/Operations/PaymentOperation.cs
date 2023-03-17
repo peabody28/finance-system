@@ -1,4 +1,5 @@
-﻿using payment.Interfaces.Entities;
+﻿using payment.Helpers;
+using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
 
@@ -12,14 +13,14 @@ namespace payment.Operations
 
         private readonly IWalletApiOperation walletApiOperation;
 
-        private readonly ICurrencyApiOperation currencyApiOperation;
+        private readonly ICurrencyRateOperation currencyRateOperation;
 
         public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation,
-            ICurrencyApiOperation currencyApiOperation, IWalletApiOperation walletApiOperation)
+            ICurrencyRateOperation currencyRateOperation, IWalletApiOperation walletApiOperation)
         {
             this.paymentRepository = paymentRepository;
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
-            this.currencyApiOperation = currencyApiOperation;
+            this.currencyRateOperation = currencyRateOperation;
             this.walletApiOperation = walletApiOperation;
         }
 
@@ -28,16 +29,14 @@ namespace payment.Operations
             var currencyFromCode = walletApiOperation.CurrencyCode(walletFrom.Number);
             var currencyToCode = walletApiOperation.CurrencyCode(walletTo.Number);
 
-            decimal? rate = 1;
-            if(!currencyFromCode.Equals(currencyToCode))
-                rate = currencyApiOperation.Rate(currencyFromCode, currencyToCode);
-
-            if (!rate.HasValue)
-                return false;
+            var currencyRate = currencyRateOperation.Get(currencyFromCode, currencyToCode);
+            
+            if (!currencyRate.HasValue)
+                throw new ArgumentException("Currency rate is not set");
 
             try
             {
-                var creditAmount = amount * rate.Value;
+                var creditAmount = AmountHelper.Compute(amount, currencyRate.Value);
                 paymentRepository.BeginTransaction();
                 paymentRepository.Create(walletFrom, balanceOperationTypeOperation.Debit, amount);
 

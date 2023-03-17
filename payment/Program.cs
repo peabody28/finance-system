@@ -37,6 +37,7 @@ builder.Services.AddScoped<ICurrencyApiOperation, CurrencyApiOperation>();
 builder.Services.AddScoped<IConfigurationOperation, ConfigurationOperation>();
 builder.Services.AddScoped<IBalanceOperationTypeOperation, BalanceOperationTypeOperation>();
 builder.Services.AddScoped<IPaymentOperation, PaymentOperation>();
+builder.Services.AddScoped<ICurrencyRateOperation, CurrencyRateOperation>();
 
 builder.Services.AddScoped<IWalletValidation, WalletValidation>();
 
