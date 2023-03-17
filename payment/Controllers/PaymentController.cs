@@ -28,14 +28,19 @@ namespace payment.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("{walletNumber}")]
+        [Route("{walletNumber?}")]
         public IEnumerable<PaymentModel> Get([FromRoute] PaymentsRequestModel model)
         {
-            var wallet = walletRepository.Get(model.WalletNumber) ?? walletRepository.Create(model.WalletNumber);
+            var wallet = !string.IsNullOrWhiteSpace(model.WalletNumber) ? walletRepository.Get(model.WalletNumber) : null;
 
             var payments = paymentRepository.Get(wallet);
 
-            return payments.Select(p => new PaymentModel { BalanceOperationTypeCode = p.BalanceOperationType.Code, Amount = p.Amount });
+            return payments.Select(p => new PaymentModel 
+            {
+                WalletNumber = p.Wallet.Number,
+                BalanceOperationTypeCode = p.BalanceOperationType.Code,
+                Amount = p.Amount
+            }).OrderBy(p => p.WalletNumber);
         }
 
         [Authorize]

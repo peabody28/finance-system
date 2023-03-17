@@ -6,6 +6,6 @@ namespace payment.Interfaces.Repositories
     {
         IPayment Create(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount);
 
-        IEnumerable<IPayment> Get(IWallet wallet, IBalanceOperationType? balanceOperationType = null);
+        IEnumerable<IPayment> Get(IWallet? wallet = null, IBalanceOperationType? balanceOperationType = null);
     }
 }

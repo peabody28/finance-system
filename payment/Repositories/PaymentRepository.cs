@@ -34,9 +34,9 @@ namespace payment.Repositories
             return payment.Entity;
         }
 
-        public IEnumerable<IPayment> Get(IWallet wallet, IBalanceOperationType? balanceOperationType = null)
+        public IEnumerable<IPayment> Get(IWallet? wallet = null, IBalanceOperationType? balanceOperationType = null)
         {
-            return dbContext.Payment.Include(p => p.BalanceOperationType).Include(p => p.Wallet).Where(p => p.Wallet.Equals(wallet) &&
+            return dbContext.Payment.Include(p => p.BalanceOperationType).Include(p => p.Wallet).Where(p => (wallet == null || p.Wallet.Equals(wallet)) &&
                 (balanceOperationType == null || p.BalanceOperationType.Equals(balanceOperationType))).ToList();
         }
     }

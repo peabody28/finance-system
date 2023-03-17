@@ -13,9 +13,12 @@ namespace payment.Validations
             this.walletApiOperation = walletApiOperation;
         }
 
-        public ValidationResult Validate(string walletNumber)
+        public ValidationResult Validate(string? walletNumber, bool isRequired = true)
         {
-            if (!walletApiOperation.IsWalletExist(walletNumber))
+            if (isRequired && string.IsNullOrWhiteSpace(walletNumber))
+                return new ValidationResult("Wallet number required");
+
+            if (!string.IsNullOrWhiteSpace(walletNumber) && !walletApiOperation.IsWalletExist(walletNumber))
                 return new ValidationResult("Wallet number does not exists");
 
             return ValidationResult.Empty();
