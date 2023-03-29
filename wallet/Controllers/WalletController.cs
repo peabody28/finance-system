@@ -38,7 +38,7 @@ namespace wallet.Controllers
             var currency = currencyRepository.Get(model.CurrencyCode);
             // TODO: Fix
             if (user == null)
-                userRepository.Create(Request.HttpContext.User.Identity.Name);
+                user = userRepository.Create(Request.HttpContext.User.Identity.Name);
             
             var walletNumber = walletOperation.GenerateNumber();
 

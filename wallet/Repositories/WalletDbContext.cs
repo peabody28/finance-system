@@ -5,11 +5,9 @@ namespace wallet.Repositories
 {
     public class WalletDbContext : DbContext
     {
-        private readonly IConfiguration Configuration;
-
-        public WalletDbContext(IConfiguration config)
+        public WalletDbContext(DbContextOptions<WalletDbContext> options) : base(options)
         {
-            Configuration = config;
+            
         }
 
         public DbSet<UserEntity> User { get; set; }
@@ -17,13 +15,6 @@ namespace wallet.Repositories
         public DbSet<WalletEntity> Wallet { get; set; }
 
         public DbSet<CurrencyEntity> Currency { get; set; }
-
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connString = Configuration.GetConnectionString("Wallet");
-            optionsBuilder.UseSqlite(connString);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
