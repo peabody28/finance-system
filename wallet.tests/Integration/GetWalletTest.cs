@@ -9,14 +9,14 @@ namespace wallet.tests.Integration
 {
     public class GetWalletTest
     {
-        private WalletWebApplicationFactory<Program, WalletDbContext> factory;
+        private WalletWebApplicationFactory factory;
 
         private string WalletNumber = "ASDF546F";
 
         [SetUp]
         public void Setup()
         {
-            factory = new WalletWebApplicationFactory<Program, WalletDbContext>();
+            factory = new WalletWebApplicationFactory();
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 

@@ -16,7 +16,4 @@
     <PackageReference Include="Validation.Helper" Version="1.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-	<InternalsVisibleTo Include="$(AssemblyName).tests" />
-  </ItemGroup>
 </Project>

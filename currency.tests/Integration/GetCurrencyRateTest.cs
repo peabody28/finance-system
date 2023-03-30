@@ -9,14 +9,12 @@ namespace currency.tests.Integration
 {
     public class GetCurrencyRateTest
     {
-        private CurrencyWebApplicationFactory<Program, CurrencyDbContext> factory;
-
-        private string WalletNumber = "ASDF546F";
+        private CurrencyWebApplicationFactory factory;
 
         [SetUp]
         public void Setup()
         {
-            factory = new CurrencyWebApplicationFactory<Program, CurrencyDbContext>();
+            factory = new CurrencyWebApplicationFactory();
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
 

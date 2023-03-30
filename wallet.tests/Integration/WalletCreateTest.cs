@@ -9,12 +9,12 @@ namespace wallet.tests.Integration
 {
     public class WalletCreateTest
     {
-        private WalletWebApplicationFactory<Program, WalletDbContext> factory;
+        private WalletWebApplicationFactory factory;
 
         [SetUp]
         public void Setup()
         {
-            factory = new WalletWebApplicationFactory<Program, WalletDbContext>();
+            factory = new WalletWebApplicationFactory();
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 

@@ -1,12 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using currency.tests.Integration.Core.Constants;
+﻿using currency.tests.Integration.Core.Constants;
 using Testing.Integration.Helper.Sqlite;
+using currency.Repositories;
 
 namespace currency.tests.Integration.Core
 {
-    public class CurrencyWebApplicationFactory<TProgram, TContext> : SqliteContextWebApplicationFactory<TProgram, TContext>
-        where TProgram : class
-        where TContext : DbContext
+    public class CurrencyWebApplicationFactory : SqliteContextWebApplicationFactory<Program, CurrencyDbContext>
     {
         public CurrencyWebApplicationFactory()
         {
