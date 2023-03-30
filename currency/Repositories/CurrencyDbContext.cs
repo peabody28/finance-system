@@ -5,23 +5,14 @@ namespace currency.Repositories
 {
     public class CurrencyDbContext : DbContext
     {
-        private readonly IConfiguration configuration;
-
-        public CurrencyDbContext(IConfiguration config)
+        public CurrencyDbContext(DbContextOptions<CurrencyDbContext> options) : base(options)
         {
-            configuration = config;
+            
         }
 
         public DbSet<CurrencyRateEntity> CurrencyRate { get; set; }
 
         public DbSet<CurrencyEntity> Currency { get; set; }
-
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connString = configuration.GetConnectionString("Currency");
-            optionsBuilder.UseSqlite(connString);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
