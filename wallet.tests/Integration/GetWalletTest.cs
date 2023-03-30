@@ -9,20 +9,22 @@ namespace wallet.tests.Integration
 {
     public class GetWalletTest
     {
-        private WalletWebApplicationFactory<Program> factory;
+        private WalletWebApplicationFactory<Program, WalletDbContext> factory;
 
         private string WalletNumber = "ASDF546F";
 
         [SetUp]
         public void Setup()
         {
-            factory = new WalletWebApplicationFactory<Program>();
+            factory = new WalletWebApplicationFactory<Program, WalletDbContext>();
+            factory.UserName = "Test user";
+            factory.UserRole = "MS";
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 
             context.Database.EnsureCreated();
 
-            var user = new UserEntity { Id = Guid.NewGuid(), Name = TestAuthHandler.UserName };
+            var user = new UserEntity { Id = Guid.NewGuid(), Name = factory.UserName };
             var currency = new CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" };
             var wallet = new WalletEntity { Id = Guid.NewGuid(), Currency = currency, Number = WalletNumber, User = user };
 

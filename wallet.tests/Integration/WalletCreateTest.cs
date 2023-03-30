@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.Net;
 using System.Net.Http.Headers;
@@ -12,12 +10,14 @@ namespace wallet.tests.Integration
 {
     public class WalletCreateTest
     {
-        private WalletWebApplicationFactory<Program> factory;
+        private WalletWebApplicationFactory<Program, WalletDbContext> factory;
 
         [SetUp]
         public void Setup()
         {
-            factory = new WalletWebApplicationFactory<Program>();
+            factory = new WalletWebApplicationFactory<Program, WalletDbContext>();
+            factory.UserName = "Test user";
+            factory.UserRole = "MS";
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 

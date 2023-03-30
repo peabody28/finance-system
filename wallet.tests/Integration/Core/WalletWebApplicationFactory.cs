@@ -1,52 +1,33 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data.Common;
-using wallet.Repositories;
+using Testing.Integration.Core;
 
 namespace wallet.tests.Integration.Core
 {
-    public class WalletWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
+    public class WalletWebApplicationFactory<TProgram, TContext> : AbstractWebApplicationFactory<TProgram, TContext>
+        where TProgram : class
+        where TContext : DbContext
     {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        protected override void AddDbConnectionService(IServiceCollection services)
         {
-            builder.ConfigureServices(services =>
+            services.AddSingleton<DbConnection>(container =>
             {
-                var dbContextDescriptor = services.SingleOrDefault(
-                    d => d.ServiceType.Equals(typeof(DbContextOptions<WalletDbContext>)));
+                var connection = new SqliteConnection("DataSource=:memory:");
+                connection.Open();
 
-                services.Remove(dbContextDescriptor);
-
-                var dbConnectionDescriptor = services.SingleOrDefault(
-                d => d.ServiceType ==
-                    typeof(DbConnection));
-
-                services.Remove(dbConnectionDescriptor);
-
-                services.AddSingleton<DbConnection>(container =>
-                {
-                    var connection = new SqliteConnection("DataSource=:memory:");
-                    connection.Open();
-
-                    return connection;
-                });
-
-                services.AddDbContext<WalletDbContext>((container, options) =>
-                {
-                    var connection = container.GetRequiredService<DbConnection>();
-                    options.UseSqlite(connection);
-                });
-
-                // override authentication
-                services.AddAuthentication(defaultScheme: TestAuthHandler.AuthenticationScheme)
-                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
-                        TestAuthHandler.AuthenticationScheme, options => { });
+                return connection;
             });
+        }
 
-            builder.UseEnvironment("Development");
+        protected override void AddDbContextService(IServiceCollection services)
+        {
+            services.AddDbContext<TContext>((container, options) =>
+            {
+                var connection = container.GetRequiredService<DbConnection>();
+                options.UseSqlite(connection);
+            });
         }
     }
 }
