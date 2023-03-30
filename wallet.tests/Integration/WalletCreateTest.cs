@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using wallet.Repositories;
 using wallet.tests.Integration.Core;
@@ -16,8 +15,6 @@ namespace wallet.tests.Integration
         public void Setup()
         {
             factory = new WalletWebApplicationFactory<Program, WalletDbContext>();
-            factory.UserName = "Test user";
-            factory.UserRole = "MS";
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 

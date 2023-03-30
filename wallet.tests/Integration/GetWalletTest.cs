@@ -17,8 +17,6 @@ namespace wallet.tests.Integration
         public void Setup()
         {
             factory = new WalletWebApplicationFactory<Program, WalletDbContext>();
-            factory.UserName = "Test user";
-            factory.UserRole = "MS";
 
             var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 

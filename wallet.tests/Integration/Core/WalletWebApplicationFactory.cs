@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data.Common;
 using Testing.Integration.Core;
+using wallet.tests.Integration.Core.Constants;
 
 namespace wallet.tests.Integration.Core
 {
@@ -10,6 +11,12 @@ namespace wallet.tests.Integration.Core
         where TProgram : class
         where TContext : DbContext
     {
+        public WalletWebApplicationFactory() 
+        {
+            UserName = TestUserConstants.UserName;
+            UserRole = TestUserConstants.UserRole;
+        }
+
         protected override void AddDbConnectionService(IServiceCollection services)
         {
             services.AddSingleton<DbConnection>(container =>
