@@ -35,3 +35,12 @@ services:
       - "./db:/app/db" 
     ports:
       - "84:80"
+
+  rabbitMQ:
+    image: "rabbitmq:3.9-management"
+    environment:
+      - RABBITMQ_DEFAULT_USER=peabody28
+      - RABBITMQ_DEFAULT_PASS=1234
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
