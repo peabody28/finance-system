@@ -39,6 +39,8 @@ builder.Services.AddScoped<IBalanceOperationTypeOperation, BalanceOperationTypeO
 builder.Services.AddScoped<IPaymentOperation, PaymentOperation>();
 builder.Services.AddScoped<ICurrencyRateOperation, CurrencyRateOperation>();
 
+builder.Services.AddScoped<IRabbitMqOperation, RabbitMqOperation>();
+
 builder.Services.AddScoped<IWalletValidation, WalletValidation>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

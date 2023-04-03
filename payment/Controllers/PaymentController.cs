@@ -50,7 +50,7 @@ namespace payment.Controllers
             var wallet = walletRepository.Get(model.WalletNumber) ?? walletRepository.Create(model.WalletNumber);
             var balanceOperationType = balanceOperationTypeRepository.Get(model.BalanceOperationTypeCode);
 
-            var payment = paymentRepository.Create(wallet, balanceOperationType, model.Amount);
+            paymentOperation.TryCreate(wallet, balanceOperationType, model.Amount);
 
             return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
         }
@@ -63,7 +63,7 @@ namespace payment.Controllers
             var walletFrom = walletRepository.Get(model.WalletNumberFrom) ?? walletRepository.Create(model.WalletNumberFrom);
             var walletTo = walletRepository.Get(model.WalletNumberTo) ?? walletRepository.Create(model.WalletNumberTo);
 
-            var status = paymentOperation.Transfer(walletFrom, walletTo, model.Amount);
+            var status = paymentOperation.TryTransfer(walletFrom, walletTo, model.Amount);
             
             return new HttpResponseMessage(status ? System.Net.HttpStatusCode.Created : System.Net.HttpStatusCode.BadRequest);
         }

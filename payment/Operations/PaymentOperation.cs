@@ -2,6 +2,7 @@
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
+using payment.Models.DTO.RabbitMq;
 
 namespace payment.Operations
 {
@@ -15,16 +16,38 @@ namespace payment.Operations
 
         private readonly ICurrencyRateOperation currencyRateOperation;
 
+        private readonly IRabbitMqOperation rabbitMqOperation;
+
+        private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
+
         public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation,
-            ICurrencyRateOperation currencyRateOperation, IWalletApiOperation walletApiOperation)
+            ICurrencyRateOperation currencyRateOperation, IWalletApiOperation walletApiOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             this.paymentRepository = paymentRepository;
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
             this.currencyRateOperation = currencyRateOperation;
             this.walletApiOperation = walletApiOperation;
+            this.rabbitMqOperation = rabbitMqOperation;
+            this.configuration = configuration;
+        }
+        
+        public bool TryCreate(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount)
+        {
+            var payment = paymentRepository.Create(wallet, balanceOperationType, amount);
+            var isPaymentCreated = payment != null;
+
+            if(isPaymentCreated)
+            {
+                var paymentCreatedMessage = new PaymentCreatedMessageModel(payment.Wallet.Number, payment.Amount, payment.BalanceOperationType.Code, payment.Created);
+                var paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
+                
+                rabbitMqOperation.SendMessage(paymentCreatedMessage, paymentCreateQueueName);
+            }
+
+            return isPaymentCreated;
         }
 
-        public bool Transfer(IWallet walletFrom, IWallet walletTo, decimal amount)
+        public bool TryTransfer(IWallet walletFrom, IWallet walletTo, decimal amount)
         {
             var currencyFromCode = walletApiOperation.CurrencyCode(walletFrom.Number);
             var currencyToCode = walletApiOperation.CurrencyCode(walletTo.Number);
