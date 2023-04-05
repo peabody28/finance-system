@@ -38,7 +38,7 @@ namespace payment.Operations
 
             if(isPaymentCreated)
             {
-                var paymentCreatedMessage = new PaymentCreatedMessageModel(payment.Wallet.Number, payment.Amount, payment.BalanceOperationType.Code, payment.Created);
+                var paymentCreatedMessage = new PaymentCreatedMessageModel(payment.Id, payment.Wallet.Number, payment.Amount, payment.BalanceOperationType.Code, payment.Created);
                 var paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
                 
                 rabbitMqOperation.SendMessage(paymentCreatedMessage, paymentCreateQueueName);

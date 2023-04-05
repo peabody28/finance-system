@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace payment.Models.DTO.RabbitMq
+namespace payment.system.custompay.worker.Models.DTO
 {
-    public class PaymentCreatedMessageModel
+    public class PaymentCreateMessageModel
     {
         [JsonProperty("id")]
         public Guid Id { get; set; }
@@ -18,14 +18,5 @@ namespace payment.Models.DTO.RabbitMq
 
         [JsonProperty("created")]
         public DateTime Created { get; set; }
-
-        public PaymentCreatedMessageModel(Guid id, string walletNumber, decimal amount, string balanceOperationTypeCode, DateTime created)
-        {
-            Id = id;
-            WalletNumber = walletNumber;
-            Amount = amount;
-            BalanceOperationTypeCode = balanceOperationTypeCode;
-            Created = created;
-        }
     }
 }

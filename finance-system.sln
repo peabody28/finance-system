@@ -30,7 +30,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{F0D3EA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payment.tests", "payment.tests\payment.tests.csproj", "{C19F7C0C-043D-4EAD-935C-FCE824FB3199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "currency.tests", "currency.tests\currency.tests.csproj", "{773330A1-52A2-424D-9DC5-1A048417797A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "currency.tests", "currency.tests\currency.tests.csproj", "{773330A1-52A2-424D-9DC5-1A048417797A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "payment.system", "payment.system", "{738C0D46-0BF6-4069-BE00-8308808CAF18}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "custompay", "custompay", "{32253960-5E4E-422C-9394-96FCA55580EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "payment.system.custompay.worker", "payment.system.custompay.worker\payment.system.custompay.worker.csproj", "{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,12 +76,18 @@ Global
 		{773330A1-52A2-424D-9DC5-1A048417797A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{773330A1-52A2-424D-9DC5-1A048417797A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{773330A1-52A2-424D-9DC5-1A048417797A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F0D3EAA8-5F1C-4E6D-91D0-39DDD1A83FEB} = {88234A52-111F-4714-9D38-793519DC8724}
+		{32253960-5E4E-422C-9394-96FCA55580EA} = {738C0D46-0BF6-4069-BE00-8308808CAF18}
+		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F} = {32253960-5E4E-422C-9394-96FCA55580EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E81041B5-F4FA-4764-A934-C90FFE6BD452}
