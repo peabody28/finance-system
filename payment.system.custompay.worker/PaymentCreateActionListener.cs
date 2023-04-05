@@ -36,16 +36,15 @@ namespace payment.system.custompay.worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                var consumer = new EventingBasicConsumer(_channel);
+            stoppingToken.ThrowIfCancellationRequested();
 
-                consumer.Received += ProcessMessage;
+            var consumer = new EventingBasicConsumer(_channel);
 
-                _channel.BasicConsume(_paymentCreateQueueName, false, consumer);
+            consumer.Received += ProcessMessage;
 
-                await Task.Delay(3000, stoppingToken);
-            }
+            _channel.BasicConsume(_paymentCreateQueueName, false, consumer);
+
+            await Task.Delay(3000, stoppingToken); 
         }
 
         private void ProcessMessage(object? ch, BasicDeliverEventArgs basicDeliverEventArgs)
