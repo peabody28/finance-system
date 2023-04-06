@@ -38,10 +38,12 @@ builder.Services.AddScoped<IConfigurationOperation, ConfigurationOperation>();
 builder.Services.AddScoped<IBalanceOperationTypeOperation, BalanceOperationTypeOperation>();
 builder.Services.AddScoped<IPaymentOperation, PaymentOperation>();
 builder.Services.AddScoped<ICurrencyRateOperation, CurrencyRateOperation>();
+builder.Services.AddScoped<IBalanceOperation, BalanceOperation>();
 
 builder.Services.AddScoped<IRabbitMqOperation, RabbitMqOperation>();
 
 builder.Services.AddScoped<IWalletValidation, WalletValidation>();
+builder.Services.AddScoped<IBalanceValidation, BalanceValidation>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

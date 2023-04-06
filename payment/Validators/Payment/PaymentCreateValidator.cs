@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using payment.Interfaces.Entities;
+using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
 using payment.Interfaces.Validations;
 using payment.Models.Payment;
@@ -10,13 +12,25 @@ namespace payment.Validators.Payment
     {
         private readonly IBalanceOperationTypeRepository balanceOperationTypeRepository;
 
-        public PaymentCreateValidator(IWalletValidation walletValidation, IBalanceOperationTypeRepository balanceOperationTypeRepository)
+        private readonly IWalletRepository walletRepository;
+
+        #region [ Model Converters ]
+
+        private IWallet Wallet(PaymentCreateModel model) => walletRepository.GetOrCreate(model.WalletNumber);
+
+        #endregion
+
+        public PaymentCreateValidator(IWalletValidation walletValidation, IBalanceValidation balanceValidation, IBalanceOperationTypeOperation balanceOperationTypeOperation,
+            IBalanceOperationTypeRepository balanceOperationTypeRepository, IWalletRepository walletRepository)
         {
             this.balanceOperationTypeRepository = balanceOperationTypeRepository;
+            this.walletRepository = walletRepository;
 
             RuleFor(model => model)
                 .Custom(ValidateBalanceOperationType)
-                .Custom((model, context) => context.AddFailures(nameof(model.WalletNumber), walletValidation.Validate(model.WalletNumber)));
+                .Custom((model, context) => context.AddFailures(nameof(model.WalletNumber), walletValidation.Validate(model.WalletNumber)))
+                .Custom((model, context) => context.AddFailures(nameof(model.Amount), balanceValidation.ValidateBalanceForDebit(Wallet(model), model.Amount)))
+                    .When(model => model.BalanceOperationTypeCode.Equals(balanceOperationTypeOperation.Debit.Code), ApplyConditionTo.CurrentValidator);
         }
 
         public void ValidateBalanceOperationType(PaymentCreateModel model, ValidationContext<PaymentCreateModel> context)

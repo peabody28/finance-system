@@ -33,5 +33,10 @@ namespace payment.Repositories
         {
             return dbContext.Wallet.FirstOrDefault(w => w.Number.Equals(number));
         }
+
+        public IWallet GetOrCreate(string number)
+        {
+            return Get(number) ?? Create(number);
+        }
     }
 }

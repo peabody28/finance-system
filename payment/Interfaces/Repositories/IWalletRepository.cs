@@ -7,5 +7,7 @@ namespace payment.Interfaces.Repositories
         IWallet Create(string number);
 
         IWallet? Get(string number);
+
+        IWallet GetOrCreate(string number);
     }
 }
