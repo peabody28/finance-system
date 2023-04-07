@@ -13,17 +13,6 @@ namespace payment.Operations
 
         public WalletApiOperation(IConfigurationOperation configurationOperation) : base(configurationOperation) { }
 
-        public bool IsWalletExist(string number)
-        {
-            var requestOperation = new RequestOperation();
-
-            var url = string.Concat(Route, number);
-
-            var response = requestOperation.Get(url, null, AuthorizationHeaders).Result;
-
-            return response.StatusCode.Equals(HttpStatusCode.OK);
-        }
-
         /// <summary>
         /// Get currency code of wallet from external source by number
         /// </summary>
