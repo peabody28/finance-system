@@ -12,7 +12,6 @@ namespace payment.Operations
 
         private readonly IBalanceOperationTypeOperation balanceOperationTypeOperation;
 
-        private readonly IWalletApiOperation walletApiOperation;
 
         private readonly ICurrencyRateOperation currencyRateOperation;
 
@@ -21,12 +20,11 @@ namespace payment.Operations
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
         public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation,
-            ICurrencyRateOperation currencyRateOperation, IWalletApiOperation walletApiOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration)
+            ICurrencyRateOperation currencyRateOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             this.paymentRepository = paymentRepository;
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
             this.currencyRateOperation = currencyRateOperation;
-            this.walletApiOperation = walletApiOperation;
             this.rabbitMqOperation = rabbitMqOperation;
             this.configuration = configuration;
         }
@@ -49,10 +47,7 @@ namespace payment.Operations
 
         public bool TryTransfer(IWallet walletFrom, IWallet walletTo, decimal amount)
         {
-            var currencyFromCode = walletApiOperation.CurrencyCode(walletFrom.Number);
-            var currencyToCode = walletApiOperation.CurrencyCode(walletTo.Number);
-
-            var currencyRate = currencyRateOperation.Get(currencyFromCode, currencyToCode);
+            var currencyRate = currencyRateOperation.Get(walletFrom.Currency.Code, walletTo.Currency.Code);
             
             if (!currencyRate.HasValue)
                 throw new ArgumentException("Currency rate is not set");

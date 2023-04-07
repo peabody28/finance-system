@@ -10,5 +10,18 @@ namespace payment.Entities
 
         public string Number { get; set; }
 
+        [ForeignKey("Currency")]
+        public Guid CurrencyFk { get; set; }
+        public ICurrency Currency { get; set; }
+
+        ICurrency IWallet.Currency
+        {
+            get => Currency;
+            set
+            {
+                Currency = value as CurrencyEntity;
+            }
+        }
+
     }
 }

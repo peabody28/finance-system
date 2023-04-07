@@ -47,7 +47,7 @@ namespace payment.Controllers
         [HttpPost]
         public HttpResponseMessage Create(PaymentCreateModel model)
         {
-            var wallet = walletRepository.GetOrCreate(model.WalletNumber);
+            var wallet = walletRepository.Get(model.WalletNumber);
             var balanceOperationType = balanceOperationTypeRepository.Get(model.BalanceOperationTypeCode);
 
             paymentOperation.TryCreate(wallet, balanceOperationType, model.Amount);
@@ -60,8 +60,8 @@ namespace payment.Controllers
         [Route("transfer")]
         public HttpResponseMessage Transfer(TransferCreateModel model)
         {
-            var walletFrom = walletRepository.GetOrCreate(model.WalletNumberFrom);
-            var walletTo = walletRepository.GetOrCreate(model.WalletNumberTo);
+            var walletFrom = walletRepository.Get(model.WalletNumberFrom);
+            var walletTo = walletRepository.Get(model.WalletNumberTo);
 
             var status = paymentOperation.TryTransfer(walletFrom, walletTo, model.Amount);
             

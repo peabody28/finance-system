@@ -16,7 +16,7 @@ namespace payment.Validators.Payment
 
         #region [ Model Converters ]
 
-        private IWallet Wallet(PaymentCreateModel model) => walletRepository.GetOrCreate(model.WalletNumber);
+        private IWallet? Wallet(PaymentCreateModel model) => walletRepository.Get(model.WalletNumber);
 
         #endregion
 

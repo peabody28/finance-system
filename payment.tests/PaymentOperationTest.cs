@@ -11,8 +11,6 @@ namespace payment.tests
     {
         private const string UnknowCurrencyWalletNumber = "some_unknow_currency_wallet";
 
-        private IWalletApiOperation walletApiOperation;
-
         private ICurrencyRateOperation currencyRateOperation;
 
         private IPaymentRepository paymentRepository;
@@ -24,11 +22,6 @@ namespace payment.tests
         [SetUp]
         public void Setup()
         {
-            var walletApiOperationMock = new Mock<IWalletApiOperation>();
-            walletApiOperationMock.Setup(a => a.CurrencyCode(It.IsAny<string>())).Returns(CurrencyConstants.USD);
-            walletApiOperationMock.Setup(a => a.CurrencyCode(UnknowCurrencyWalletNumber)).Returns(CurrencyConstants.UnknownCurrencyCode);
-            walletApiOperation = walletApiOperationMock.Object;
-
             var currencyRateOperationMock = new Mock<ICurrencyRateOperation>();
             currencyRateOperationMock.Setup(a => a.Get(It.IsAny<string>(), It.IsAny<string>())).Returns(0.94m);
             currencyRateOperationMock.Setup(a => a.Get(CurrencyConstants.UnknownCurrencyCode, It.IsAny<string>())).Returns((decimal?)null);
@@ -58,11 +51,13 @@ namespace payment.tests
             // Arrange
             var walletFromStub = new Mock<IWallet>();
             walletFromStub.Setup(a => a.Number).Returns(UnknowCurrencyWalletNumber);
+            walletFromStub.Setup(a => a.Currency.Code).Returns(CurrencyConstants.UnknownCurrencyCode);
 
-            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, walletApiOperation, rabbitMqOperation, null);
+            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null);
 
             var walletToStub = new Mock<IWallet>();
             walletToStub.SetupAllProperties();
+            walletToStub.Setup(a => a.Currency.Code).Returns(CurrencyConstants.USD);
 
             // Act && Assert
             Assert.Throws<ArgumentException>(() => paymentOperation.TryTransfer(walletFromStub.Object, walletToStub.Object, 2));
@@ -74,11 +69,13 @@ namespace payment.tests
             // Arrange
             var walletFromStub = new Mock<IWallet>();
             walletFromStub.SetupAllProperties();
+            walletFromStub.Setup(a => a.Currency.Code).Returns(CurrencyConstants.USD);
 
             var walletToStub = new Mock<IWallet>();
             walletToStub.SetupAllProperties();
+            walletToStub.Setup(a => a.Currency.Code).Returns(CurrencyConstants.EUR);
 
-            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, walletApiOperation, rabbitMqOperation, null);
+            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null);
 
             // Act
             var result = paymentOperation.TryTransfer(walletFromStub.Object, walletToStub.Object, 2);

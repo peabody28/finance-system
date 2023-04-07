@@ -4,10 +4,8 @@ namespace payment.Interfaces.Repositories
 {
     public interface IWalletRepository
     {
-        IWallet Create(string number);
-
         IWallet? Get(string number);
 
-        IWallet GetOrCreate(string number);
+        IWallet Create(string number, ICurrency currency);
     }
 }

@@ -17,13 +17,15 @@ namespace payment.Repositories
             this.serviceProvider = serviceProvider;
         }
 
-        public IWallet Create(string number)
+        public IWallet Create(string number, ICurrency currency)
         {
             var entity = serviceProvider.GetRequiredService<IWallet>();
             entity.Id = Guid.NewGuid();
             entity.Number = number;
-
+            entity.Currency = currency;
+            
             var wallet = dbContext.Wallet.Add(entity as WalletEntity);
+            dbContext.Entry(entity.Currency).State = EntityState.Unchanged;
             dbContext.SaveChanges();
 
             return wallet.Entity;
@@ -31,12 +33,7 @@ namespace payment.Repositories
 
         public IWallet? Get(string number)
         {
-            return dbContext.Wallet.FirstOrDefault(w => w.Number.Equals(number));
-        }
-
-        public IWallet GetOrCreate(string number)
-        {
-            return Get(number) ?? Create(number);
+            return dbContext.Wallet.Include(w => w.Currency).FirstOrDefault(w => w.Number.Equals(number));
         }
     }
 }

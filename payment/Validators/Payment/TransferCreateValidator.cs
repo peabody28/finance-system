@@ -11,7 +11,7 @@ namespace payment.Validators.Payment
     {
         private readonly IWalletRepository walletRepository;
 
-        private IWallet WalletFrom(TransferCreateModel model) => walletRepository.GetOrCreate(model.WalletNumberFrom);
+        private IWallet WalletFrom(TransferCreateModel model) => walletRepository.Get(model.WalletNumberFrom);
 
         public TransferCreateValidator(IWalletValidation walletValidation, IBalanceValidation balanceValidation, IWalletRepository walletRepository)
         {

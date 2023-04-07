@@ -31,7 +31,6 @@ builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
 builder.Services.AddTransient<payment.Interfaces.Entities.IConfiguration, ConfigurationEntity>();
 
-builder.Services.AddScoped<IWalletApiOperation, WalletApiOperation>();
 builder.Services.AddScoped<ICurrencyApiOperation, CurrencyApiOperation>();
 
 builder.Services.AddScoped<IConfigurationOperation, ConfigurationOperation>();
