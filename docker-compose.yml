@@ -49,3 +49,8 @@ services:
     build:
         context: .
         dockerfile: ./payment.system.custompay.worker/Dockerfile 
+
+  payment.worker:
+    build:
+        context: .
+        dockerfile: ./payment.worker/Dockerfile 
