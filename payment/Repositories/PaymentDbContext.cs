@@ -12,6 +12,8 @@ namespace payment.Repositories
             this.configuration = config;
         }
 
+        public DbSet<CurrencyEntity> Currency { get; set; }
+
         public DbSet<WalletEntity> Wallet { get; set; }
 
         public DbSet<BalanceOperationTypeEntity> BalanceOperationType { get; set; }
@@ -36,6 +38,9 @@ namespace payment.Repositories
 
             modelBuilder.Entity<PaymentEntity>()
                 .HasOne(p => p.Wallet as WalletEntity);
+
+            modelBuilder.Entity<WalletEntity>()
+                .HasOne(p => p.Currency as CurrencyEntity);
         }
     }
 }

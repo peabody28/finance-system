@@ -18,18 +18,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-
 builder.Services.AddDbContext<PaymentDbContext>();
 builder.Services.AddScoped<IBalanceOperationTypeRepository, BalanceOperationTypeRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
-
+builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
 
 builder.Services.AddTransient<IBalanceOperationType, BalanceOperationTypeEntity>();
 builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
 builder.Services.AddTransient<payment.Interfaces.Entities.IConfiguration, ConfigurationEntity>();
+builder.Services.AddTransient<ICurrency, CurrencyEntity>();
 
 builder.Services.AddScoped<ICurrencyApiOperation, CurrencyApiOperation>();
 
