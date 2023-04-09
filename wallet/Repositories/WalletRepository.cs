@@ -17,7 +17,7 @@ namespace wallet.Repositories
             this.serviceProvider = serviceProvider;
         }
 
-        public IWallet Create(IUser user, ICurrency currency, string number)
+        public IWallet Create(string number, ICurrency currency, IUser user)
         {
             var entity = serviceProvider.GetRequiredService<IWallet>();
             entity.Id = Guid.NewGuid();
@@ -39,15 +39,9 @@ namespace wallet.Repositories
             return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency).Where(w => w.User.Equals(user)).ToList();
         }
 
-        public IWallet? Get(string number)
+        public IWallet? Get(string number, IUser? user = null)
         {
-            return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency).FirstOrDefault(w => w.Number.Equals(number));
-        }
-
-        public IWallet? Get(IUser user, string number)
-        {
-            return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency)
-                .FirstOrDefault(w => w.User.Equals(user) && w.Number.Equals(number));
+            return dbContext.Wallet.Include(w => w.User).Include(w => w.Currency).FirstOrDefault(w => w.Number.Equals(number) && (user == null || w.User.Equals(user)));
         }
     }
 }

@@ -42,7 +42,7 @@ namespace wallet.Controllers
             
             var walletNumber = walletOperation.GenerateNumber();
 
-            var wallet = walletRepository.Create(user, currency, walletNumber);
+            var wallet = walletOperation.Create(walletNumber, currency, user);
 
             return new WalletModel { Number = wallet.Number, CurrencyCode = wallet.Currency.Code };
         }

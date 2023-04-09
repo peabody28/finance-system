@@ -4,12 +4,10 @@ namespace wallet.Interfaces.Repositories
 {
     public interface IWalletRepository
     {
-        IWallet Create(IUser user, ICurrency currency, string number);
+        IWallet Create(string number, ICurrency currency, IUser user);
 
         IEnumerable<IWallet> Get(IUser user);
 
-        IWallet? Get(string number);
-
-        IWallet? Get(IUser user, string number);
+        IWallet? Get(string number, IUser? user = null);
     }
 }

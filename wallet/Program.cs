@@ -2,8 +2,8 @@
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RabbitMQ.Client;
 using System.Text;
 using wallet.Entities;
 using wallet.Interfaces.Entities;
@@ -34,6 +34,18 @@ builder.Services.AddTransient<IWallet, WalletEntity>();
 
 builder.Services.AddScoped<IWalletOperation, WalletOperation>();
 builder.Services.AddScoped<IUserOperation, UserOperation>();
+builder.Services.AddSingleton<IRabbitMqOperation, RabbitMqOperation>();
+
+// RabbitMQ
+var factory = new ConnectionFactory()
+{
+    HostName = builder.Configuration.GetValue<string>("RabbitMq:Host:Name"),
+    Port = builder.Configuration.GetValue<int>("RabbitMq:Host:Port"),
+    UserName = builder.Configuration.GetValue<string>("RabbitMq:UserName"),
+    Password = builder.Configuration.GetValue<string>("RabbitMq:Password")
+};
+
+builder.Services.AddSingleton(factory);
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
