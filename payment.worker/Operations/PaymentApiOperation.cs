@@ -34,7 +34,7 @@ namespace payment.worker.Operations
             }
             catch
             {
-                logger.LogError("Wallet create ({number}) request failed", model.WalletNumber);
+                logger.LogError("Wallet create ({number}) request failed", model?.WalletNumber);
                 return false;
             }
         }
