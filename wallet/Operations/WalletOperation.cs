@@ -23,7 +23,7 @@ namespace wallet.Operations
 
         public string GenerateNumber()
         {
-            var pattern = configuration.GetSection("WalletNumberPattern").Value;
+            var pattern = configuration.GetValue<string>("WalletNumberPattern");
 
             return RegExpHelper.GenerateString(pattern);
         }
@@ -32,14 +32,16 @@ namespace wallet.Operations
         {
             var wallet = walletRepository.Create(walletNumber, currency, user);
 
-            if(wallet != null)
-            {
-                var walletCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:WalletCreate");
-                var walletDtoModel = new WalletDtoModel { WalletNumber = walletNumber, CurrencyCode = wallet.Currency.Code };
-                rabbitMqOperation.SendMessage(walletDtoModel, walletCreateQueueName);
-            }
+            SendRabbitMqCreateWalletMessage(wallet);
 
             return wallet;
+        }
+
+        private void SendRabbitMqCreateWalletMessage(IWallet wallet)
+        {
+            var walletCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:WalletCreate");
+            var walletDtoModel = new WalletDtoModel { WalletNumber = wallet.Number, CurrencyCode = wallet.Currency.Code };
+            rabbitMqOperation.SendMessage(walletDtoModel, walletCreateQueueName);
         }
     }
 }

@@ -16,15 +16,13 @@ namespace wallet.Operations
             this.userRepository = userRepository;
         }
 
-        public IUser? CurrentUser
+        public IUser CurrentUser
         {
             get
             {
                 var name = httpContextAccessor.HttpContext.User?.Identity?.Name;
-                if (string.IsNullOrWhiteSpace(name))
-                    return null;
 
-                return userRepository.Get(name);
+                return userRepository.GetOrCreate(name);
             }
         }
     }

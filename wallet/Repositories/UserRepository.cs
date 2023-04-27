@@ -33,5 +33,10 @@ namespace wallet.Repositories
         {
             return dbContext.User.FirstOrDefault(user => user.Name.Equals(name));
         }
+
+        public IUser GetOrCreate(string name)
+        {
+            return Get(name) ?? Create(name);
+        }
     }
 }

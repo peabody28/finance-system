@@ -4,6 +4,6 @@ namespace wallet.Interfaces.Operations
 {
     public interface IUserOperation
     {
-        IUser? CurrentUser { get; }
+        IUser CurrentUser { get; }
     }
 }

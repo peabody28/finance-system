@@ -7,5 +7,7 @@ namespace wallet.Interfaces.Repositories
         IUser Create(string name);
 
         IUser? Get(string name);
+
+        IUser GetOrCreate(string name);
     }
 }
