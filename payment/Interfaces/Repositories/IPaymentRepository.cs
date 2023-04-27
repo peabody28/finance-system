@@ -2,7 +2,7 @@
 
 namespace payment.Interfaces.Repositories
 {
-    public interface IPaymentRepository : IRepositoryBase
+    public interface IPaymentRepository : IRepository
     {
         IPayment Create(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount);
 

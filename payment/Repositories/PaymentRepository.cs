@@ -5,7 +5,7 @@ using payment.Interfaces.Repositories;
 
 namespace payment.Repositories
 {
-    public class PaymentRepository : RepositoryBase, IPaymentRepository
+    public class PaymentRepository : Repository, IPaymentRepository
     {
         private readonly PaymentDbContext dbContext;
 
@@ -36,8 +36,8 @@ namespace payment.Repositories
 
         public IEnumerable<IPayment> Get(IWallet? wallet = null, IBalanceOperationType? balanceOperationType = null)
         {
-            return dbContext.Payment.Include(p => p.BalanceOperationType).Include(p => p.Wallet).Where(p => (wallet == null || p.Wallet.Equals(wallet)) &&
-                (balanceOperationType == null || p.BalanceOperationType.Equals(balanceOperationType))).ToList();
+            return dbContext.Payment.Include(p => p.BalanceOperationType).Include(p => p.Wallet)
+                .Where(p => (wallet == null || p.Wallet.Equals(wallet)) && (balanceOperationType == null || p.BalanceOperationType.Equals(balanceOperationType))).ToList();
         }
     }
 }

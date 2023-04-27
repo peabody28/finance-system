@@ -5,6 +5,6 @@ namespace payment.Interfaces.Validations
 {
     public interface IBalanceValidation
     {
-        ValidationResult ValidateBalanceForDebit(IWallet wallet, decimal amount);
+        ValidationResult ValidateWalletForDebit(IWallet wallet, decimal amount);
     }
 }

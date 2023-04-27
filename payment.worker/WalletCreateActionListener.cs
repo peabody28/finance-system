@@ -9,21 +9,21 @@ namespace payment.worker
 {
     public class WalletCreateActionListener : BackgroundService
     {
-        private readonly ILogger<WalletCreateActionListener> _logger;
+        private readonly ILogger<WalletCreateActionListener> logger;
 
         private readonly IServiceProvider serviceProvider;
 
         private readonly PaymentApiOperation paymentApiOperation;
 
-        private readonly string _walletCreateQueueName;
+        private readonly string walletCreateQueueName;
 
         public WalletCreateActionListener(ILogger<WalletCreateActionListener> logger, IConfiguration configuration, PaymentApiOperation paymentApiOperation, IServiceProvider serviceProvider)
         {
-            _logger = logger;
+            this.logger = logger;
             this.paymentApiOperation = paymentApiOperation;
             this.serviceProvider = serviceProvider;
 
-            _walletCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:WalletCreate");
+            walletCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:WalletCreate");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -46,17 +46,17 @@ namespace payment.worker
 
                 if(status)
                 {
-                    _logger.LogInformation("Wallet ({number}) create message procceed", model.WalletNumber);
+                    logger.LogInformation("Wallet ({number}) create message procceed", model.WalletNumber);
                     consumer.Model.BasicAck(basicDeliverEventArgs.DeliveryTag, false);
                 }
                 else
                 {
-                    _logger.LogError("Wallet ({number}) cannot be processed", model?.WalletNumber);
+                    logger.LogError("Wallet ({number}) cannot be processed", model?.WalletNumber);
                     consumer.Model.BasicNack(basicDeliverEventArgs.DeliveryTag, false, false);
                 }
             };
 
-            consumer.Model.BasicConsume(_walletCreateQueueName, false, consumer);
+            consumer.Model.BasicConsume(walletCreateQueueName, false, consumer);
 
             return Task.CompletedTask;
         }

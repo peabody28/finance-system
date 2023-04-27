@@ -4,7 +4,7 @@ using payment.Interfaces.Repositories;
 
 namespace payment.Repositories
 {
-    public class CurrencyRepository : RepositoryBase, ICurrencyRepository
+    public class CurrencyRepository : Repository, ICurrencyRepository
     {
         private readonly IServiceProvider serviceProvider;
 

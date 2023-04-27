@@ -6,13 +6,13 @@ using payment.Models.DTO.Currency;
 
 namespace payment.Operations
 {
-    public class CurrencyApiOperation : ApiOperationBase, ICurrencyApiOperation
+    public class CurrencyApiOperation : ApiOperation, ICurrencyApiOperation
     {
         protected override string? Route => configurationOperation.Get<string>(ConfigurationConstants.CURRENCY_MS_ROUTE);
 
         public CurrencyApiOperation(IConfigurationOperation configurationOperation) : base(configurationOperation) { }
 
-        public decimal? Rate(string currencyFromCode, string currencyToCode)
+        public decimal? GetRate(string currencyFromCode, string currencyToCode)
         {
             var requestOperation = new RequestOperation();
 
@@ -22,7 +22,7 @@ namespace payment.Operations
 
             var url = string.Concat(Route, RouteConstants.CurrencyRateRoutePostfix);
 
-            var response = requestOperation.Get(url, data, AuthorizationHeaders).Result;
+            var response = requestOperation.Get(url, data, DefaultHeaders).Result;
 
             var responseContent = response.Content.ReadAsStringAsync().Result;
 

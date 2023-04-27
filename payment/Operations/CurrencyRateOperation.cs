@@ -23,7 +23,7 @@ namespace payment.Operations
             
             if(!currencyFromCode.Equals(currencyToCode) && !_cache.TryGetValue(cacheKey, out rate))
             {
-                rate = currencyApiOperation.Rate(currencyFromCode, currencyToCode);
+                rate = currencyApiOperation.GetRate(currencyFromCode, currencyToCode);
                 _cache.Set(cacheKey, rate, TimeSpan.FromDays(1));
             }
 

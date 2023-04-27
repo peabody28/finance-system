@@ -3,11 +3,11 @@ using payment.Interfaces.Repositories;
 
 namespace payment.Repositories
 {
-    public class RepositoryBase : IRepositoryBase
+    public class Repository : IRepository
     {
         private readonly DbContext dbContext;
 
-        public RepositoryBase(DbContext dbContext)
+        public Repository(DbContext dbContext)
         {
             this.dbContext = dbContext;
         }

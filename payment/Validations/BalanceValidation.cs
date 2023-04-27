@@ -14,9 +14,9 @@ namespace payment.Validations
             this.balanceOperation = balanceOperation;
         }
 
-        public ValidationResult ValidateBalanceForDebit(IWallet wallet, decimal amount)
+        public ValidationResult ValidateWalletForDebit(IWallet wallet, decimal amount)
         {
-            var walletBalance = balanceOperation.Balance(wallet);
+            var walletBalance = balanceOperation.Get(wallet);
             if (walletBalance < amount)
                 return new ValidationResult("Insufficient funds");
 

@@ -13,8 +13,8 @@ namespace payment.tests
         public void Setup()
         {
             var mock = new Mock<ICurrencyApiOperation>();
-            mock.Setup(a => a.Rate(It.IsAny<string>(), It.IsAny<string>())).Returns(0.94m);
-            mock.Setup(a => a.Rate(CurrencyConstants.UnknownCurrencyCode, It.IsAny<string>())).Returns((decimal?)null);
+            mock.Setup(a => a.GetRate(It.IsAny<string>(), It.IsAny<string>())).Returns(0.94m);
+            mock.Setup(a => a.GetRate(CurrencyConstants.UnknownCurrencyCode, It.IsAny<string>())).Returns((decimal?)null);
 
             currencyRateOperation = new CurrencyRateOperation(mock.Object);
         }

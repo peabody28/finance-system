@@ -50,9 +50,9 @@ namespace payment.Controllers
             var wallet = walletRepository.Get(model.WalletNumber);
             var balanceOperationType = balanceOperationTypeRepository.Get(model.BalanceOperationTypeCode);
 
-            paymentOperation.TryCreate(wallet, balanceOperationType, model.Amount);
+            var isPaymentCreated = paymentOperation.TryCreate(wallet, balanceOperationType, model.Amount);
 
-            return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
+            return new HttpResponseMessage(isPaymentCreated ? System.Net.HttpStatusCode.Created : System.Net.HttpStatusCode.BadRequest);
         }
 
         [Authorize]
@@ -63,9 +63,9 @@ namespace payment.Controllers
             var walletFrom = walletRepository.Get(model.WalletNumberFrom);
             var walletTo = walletRepository.Get(model.WalletNumberTo);
 
-            var status = paymentOperation.TryTransfer(walletFrom, walletTo, model.Amount);
+            var isTransferCreated = paymentOperation.TryTransfer(walletFrom, walletTo, model.Amount);
             
-            return new HttpResponseMessage(status ? System.Net.HttpStatusCode.Created : System.Net.HttpStatusCode.BadRequest);
+            return new HttpResponseMessage(isTransferCreated ? System.Net.HttpStatusCode.Created : System.Net.HttpStatusCode.BadRequest);
         }
     }
 }

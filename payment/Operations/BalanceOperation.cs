@@ -16,7 +16,7 @@ namespace payment.Operations
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
         }
 
-        public decimal Balance(IWallet wallet)
+        public decimal Get(IWallet wallet)
         {
             var payments = paymentRepository.Get(wallet);
 

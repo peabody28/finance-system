@@ -5,7 +5,7 @@ using payment.Interfaces.Operations;
 
 namespace payment.Operations
 {
-    public abstract class ApiOperationBase
+    public abstract class ApiOperation
     {
         protected abstract string? Route { get; }
         protected virtual string? ClientToken => configurationOperation.Get<string>(ConfigurationConstants.CLIENT_TOKEN);
@@ -13,12 +13,12 @@ namespace payment.Operations
 
         protected readonly IConfigurationOperation configurationOperation;
 
-        public ApiOperationBase(IConfigurationOperation configurationOperation)
+        public ApiOperation(IConfigurationOperation configurationOperation)
         {
             this.configurationOperation = configurationOperation;
         }
 
-        protected IDictionary<string, string> AuthorizationHeaders
+        protected IDictionary<string, string> DefaultHeaders
         {
             get
             {

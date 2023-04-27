@@ -2,6 +2,6 @@
 {
     public interface ICurrencyApiOperation
     {
-        decimal? Rate(string currencyFromCode, string currencyToCode);
+        decimal? GetRate(string currencyFromCode, string currencyToCode);
     }
 }

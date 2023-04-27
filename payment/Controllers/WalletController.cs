@@ -29,8 +29,7 @@ namespace payment.Controllers
 
             var wallet = walletRepository.Create(model.WalletNumber, currency);
 
-            var httpResponseStatusCode = wallet != null ? HttpStatusCode.Created : HttpStatusCode.InternalServerError;
-            return new HttpResponseMessage(httpResponseStatusCode);
+            return new HttpResponseMessage(wallet != null ? HttpStatusCode.Created : HttpStatusCode.InternalServerError);
         }
     }
 }

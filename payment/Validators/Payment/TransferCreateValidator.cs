@@ -19,7 +19,7 @@ namespace payment.Validators.Payment
 
             RuleFor(model => model)
                 .Custom((model, context) => context.AddFailures(nameof(model.WalletNumberFrom), walletValidation.Validate(model.WalletNumberFrom)))
-                .Custom((model, context) => context.AddFailures(nameof(model.Amount), balanceValidation.ValidateBalanceForDebit(WalletFrom(model), model.Amount)))
+                .Custom((model, context) => context.AddFailures(nameof(model.Amount), balanceValidation.ValidateWalletForDebit(WalletFrom(model), model.Amount)))
                 .Custom((model, context) => context.AddFailures(nameof(model.WalletNumberTo), walletValidation.Validate(model.WalletNumberTo)));
         }
     }

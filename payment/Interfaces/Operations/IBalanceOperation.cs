@@ -4,6 +4,6 @@ namespace payment.Interfaces.Operations
 {
     public interface IBalanceOperation
     {
-        decimal Balance(IWallet wallet);
+        decimal Get(IWallet wallet);
     }
 }

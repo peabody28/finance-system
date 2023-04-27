@@ -1,6 +1,6 @@
 ﻿namespace payment.Interfaces.Repositories
 {
-    public interface IRepositoryBase
+    public interface IRepository
     {
         void BeginTransaction();
 

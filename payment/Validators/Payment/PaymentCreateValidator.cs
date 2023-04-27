@@ -29,7 +29,7 @@ namespace payment.Validators.Payment
             RuleFor(model => model)
                 .Custom(ValidateBalanceOperationType)
                 .Custom((model, context) => context.AddFailures(nameof(model.WalletNumber), walletValidation.Validate(model.WalletNumber)))
-                .Custom((model, context) => context.AddFailures(nameof(model.Amount), balanceValidation.ValidateBalanceForDebit(Wallet(model), model.Amount)))
+                .Custom((model, context) => context.AddFailures(nameof(model.Amount), balanceValidation.ValidateWalletForDebit(Wallet(model), model.Amount)))
                     .When(model => model.BalanceOperationTypeCode.Equals(balanceOperationTypeOperation.Debit.Code), ApplyConditionTo.CurrentValidator);
         }
 
