@@ -1,0 +1,44 @@
+{
+  "users": [{
+    "name": "peabody28",
+    "password": "1234",
+    "tags": "administrator"
+  }],
+  "vhosts": [{
+    "name": "/"
+  }],
+  "permissions": [{
+    "user": "peabody28",
+    "vhost": "/",
+    "configure": ".*",
+    "write": ".*",
+    "read": ".*"
+  }],
+  "queues": [
+    {
+      "name": "wallet-create",
+      "vhost": "/",
+      "durable": false,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "payment-create",
+      "vhost": "/",
+      "durable": false,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    }
+  ],
+  "vhosts": [{
+    "name": "/"
+  }],
+  "exchanges": [
+  ],
+  "bindings": [
+  ]
+}
