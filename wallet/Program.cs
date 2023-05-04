@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RabbitMQ.Client;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 using System.Text;
 using wallet.Entities;
 using wallet.Interfaces.Entities;
@@ -46,6 +48,20 @@ var factory = new ConnectionFactory()
 };
 
 builder.Services.AddSingleton(factory);
+
+Log.Logger = new LoggerConfiguration()
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .WriteTo.Debug()
+        .WriteTo.Console()
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(builder.Configuration["ElasticConfiguration:Uri"]))
+        {
+            AutoRegisterTemplate = true,
+            IndexFormat = $"microservices-wallet-{builder.Environment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
+        })
+        .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();

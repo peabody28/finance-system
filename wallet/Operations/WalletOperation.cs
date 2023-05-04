@@ -14,11 +14,15 @@ namespace wallet.Operations
 
         private readonly IRabbitMqOperation rabbitMqOperation;
 
-        public WalletOperation(IConfiguration configuration, IWalletRepository walletRepository, IRabbitMqOperation rabbitMqOperation)
+        private readonly ILogger<WalletOperation> logger;
+
+        public WalletOperation(IConfiguration configuration, IWalletRepository walletRepository, IRabbitMqOperation rabbitMqOperation, ILogger<WalletOperation> logger)
         {
             this.configuration = configuration;
             this.walletRepository = walletRepository;
             this.rabbitMqOperation = rabbitMqOperation;
+            this.logger = logger;
+
         }
 
         public string GenerateNumber()
@@ -42,6 +46,9 @@ namespace wallet.Operations
             var walletCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:WalletCreate");
             var walletDtoModel = new WalletDtoModel { WalletNumber = wallet.Number, CurrencyCode = wallet.Currency.Code };
             rabbitMqOperation.SendMessage(walletDtoModel, walletCreateQueueName);
+
+            logger.LogInformation("Wallet created: userName: {userName}, walletNumber: {walletNumber}, currencyCode: {currency}",
+                wallet.User.Name, wallet.Number, wallet.Currency.Code);
         }
     }
 }
