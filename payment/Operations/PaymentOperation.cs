@@ -19,14 +19,17 @@ namespace payment.Operations
 
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
+        private readonly ILogger<PaymentOperation> logger;
+
         public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation,
-            ICurrencyRateOperation currencyRateOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration)
+            ICurrencyRateOperation currencyRateOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration, ILogger<PaymentOperation> logger)
         {
             this.paymentRepository = paymentRepository;
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
             this.currencyRateOperation = currencyRateOperation;
             this.rabbitMqOperation = rabbitMqOperation;
             this.configuration = configuration;
+            this.logger = logger;
         }
         
         public bool TryCreate(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount)
@@ -36,6 +39,9 @@ namespace payment.Operations
 
             if(isPaymentCreated)
             {
+                logger.LogInformation("Payment created: paymentId: {id}, walletNumber: {walletNumber}, amount: {amount}, currencyCode: {currencyCode}",
+                    payment.Id, payment.Wallet.Number, payment.Amount, payment.Wallet.Currency.Code);
+
                 var paymentCreatedMessage = new PaymentCreatedMessageModel(payment.Id, payment.Wallet.Number, payment.Amount, payment.BalanceOperationType.Code, payment.Created);
                 var paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
                 

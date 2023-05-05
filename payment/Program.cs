@@ -10,6 +10,8 @@ using payment.Interfaces.Validations;
 using payment.Operations;
 using payment.Repositories;
 using payment.Validations;
+using Serilog.Sinks.Elasticsearch;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+Log.Logger = new LoggerConfiguration()
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .WriteTo.Debug()
+        .WriteTo.Console()
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(builder.Configuration["ElasticConfiguration:Uri"]))
+        {
+            AutoRegisterTemplate = true,
+            IndexFormat = $"microservices-payment-{builder.Environment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
+        })
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<PaymentDbContext>();
 builder.Services.AddScoped<IBalanceOperationTypeRepository, BalanceOperationTypeRepository>();

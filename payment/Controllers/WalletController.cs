@@ -15,10 +15,13 @@ namespace payment.Controllers
 
         private readonly ICurrencyRepository currencyRepository;
 
-        public WalletController(IWalletRepository walletRepository, ICurrencyRepository currencyRepository)
+        private readonly ILogger<WalletController> logger;
+
+        public WalletController(IWalletRepository walletRepository, ICurrencyRepository currencyRepository, ILogger<WalletController> logger)
         {
             this.walletRepository = walletRepository;
             this.currencyRepository = currencyRepository;
+            this.logger = logger;
         }
 
         [Authorize(Roles = RoleConstants.MS)]
@@ -28,6 +31,9 @@ namespace payment.Controllers
             var currency = currencyRepository.GetOrCreate(model.CurrencyCode);
 
             var wallet = walletRepository.Create(model.WalletNumber, currency);
+
+            if (wallet != null)
+                logger.LogInformation("Wallet created: walletNumber: {walletNumber}, currencyCode: {currencyCode}", wallet.Number, currency.Code);
 
             return new HttpResponseMessage(wallet != null ? HttpStatusCode.Created : HttpStatusCode.InternalServerError);
         }

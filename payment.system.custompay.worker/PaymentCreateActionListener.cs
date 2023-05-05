@@ -54,7 +54,7 @@ namespace payment.system.custompay.worker
             var model = JsonConvert.DeserializeObject<PaymentCreateMessageModel>(content);
 
             // some actions like external API call to payment system
-            _logger.LogInformation("Payment with id {id} is processed at {time}", model.Id, DateTimeOffset.Now);
+            _logger.LogInformation("Payment with id {id} is processed", model.Id);
 
             _channel.BasicAck(basicDeliverEventArgs.DeliveryTag, false);
         }
