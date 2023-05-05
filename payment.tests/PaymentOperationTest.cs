@@ -48,7 +48,6 @@ namespace payment.tests
             rabbitMqOperation = rabbitMqMock.Object;
 
             var loggerMock = new Mock<ILogger<PaymentOperation>>();
-            loggerMock.SetupSequence(a => a.LogInformation(It.IsAny<string>(), It.IsAny<It.IsAnyType>()));
             logger = loggerMock.Object;
         }
 
