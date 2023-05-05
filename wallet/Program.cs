@@ -59,6 +59,7 @@ Log.Logger = new LoggerConfiguration()
             AutoRegisterTemplate = true,
             IndexFormat = $"microservices-wallet-{builder.Environment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
         })
+        .ReadFrom.Configuration(builder.Configuration)
         .CreateLogger();
 
 builder.Host.UseSerilog();
