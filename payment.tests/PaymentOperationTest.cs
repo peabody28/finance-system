@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using Moq;
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
@@ -18,6 +20,8 @@ namespace payment.tests
         private IBalanceOperationTypeOperation balanceOperationTypeOperation;
 
         private IRabbitMqOperation rabbitMqOperation;
+
+        private ILogger<PaymentOperation> logger;
 
         [SetUp]
         public void Setup()
@@ -43,6 +47,9 @@ namespace payment.tests
             rabbitMqMock.SetupSequence(a => a.SendMessage(It.IsAny<It.IsAnyType>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Pass();
             rabbitMqOperation = rabbitMqMock.Object;
 
+            var loggerMock = new Mock<ILogger<PaymentOperation>>();
+            loggerMock.SetupSequence(a => a.LogInformation(It.IsAny<string>(), It.IsAny<It.IsAnyType>()));
+            logger = loggerMock.Object;
         }
 
         [Test]
@@ -53,7 +60,7 @@ namespace payment.tests
             walletFromStub.Setup(a => a.Number).Returns(UnknowCurrencyWalletNumber);
             walletFromStub.Setup(a => a.Currency.Code).Returns(CurrencyConstants.UnknownCurrencyCode);
 
-            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null);
+            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null, logger);
 
             var walletToStub = new Mock<IWallet>();
             walletToStub.SetupAllProperties();
@@ -75,7 +82,7 @@ namespace payment.tests
             walletToStub.SetupAllProperties();
             walletToStub.Setup(a => a.Currency.Code).Returns(CurrencyConstants.EUR);
 
-            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null);
+            var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null, logger);
 
             // Act
             var result = paymentOperation.TryTransfer(walletFromStub.Object, walletToStub.Object, 2);
