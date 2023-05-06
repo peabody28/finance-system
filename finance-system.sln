@@ -38,7 +38,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "custompay", "custompay", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payment.system.custompay.worker", "payment.system.custompay.worker\payment.system.custompay.worker.csproj", "{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "payment.worker", "payment.worker\payment.worker.csproj", "{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payment.worker", "payment.worker\payment.worker.csproj", "{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "elk", "elk", "{593E2126-856D-45CB-B687-D4CC3C11F595}"
+	ProjectSection(SolutionItems) = preProject
+		elk\docker-compose.yml = elk\docker-compose.yml
+		elk\kibana.yml = elk\kibana.yml
+		elk\logstash.conf = elk\logstash.conf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rabbitMq", "rabbitMq", "{15E0932C-22A4-456B-95A6-49412A2B2AE6}"
+	ProjectSection(SolutionItems) = preProject
+		rabbitMq\docker-compose.yml = rabbitMq\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rabbitmq-config", "rabbitmq-config", "{3CFAE0BF-192B-4FA3-A0A2-0CCF8E1F7028}"
+	ProjectSection(SolutionItems) = preProject
+		rabbitMq\rabbitmq-config\definitions.json = rabbitMq\rabbitmq-config\definitions.json
+		rabbitMq\rabbitmq-config\rabbitmq.conf = rabbitMq\rabbitmq-config\rabbitmq.conf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,6 +112,9 @@ Global
 		{F0D3EAA8-5F1C-4E6D-91D0-39DDD1A83FEB} = {88234A52-111F-4714-9D38-793519DC8724}
 		{32253960-5E4E-422C-9394-96FCA55580EA} = {738C0D46-0BF6-4069-BE00-8308808CAF18}
 		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F} = {32253960-5E4E-422C-9394-96FCA55580EA}
+		{593E2126-856D-45CB-B687-D4CC3C11F595} = {88234A52-111F-4714-9D38-793519DC8724}
+		{15E0932C-22A4-456B-95A6-49412A2B2AE6} = {88234A52-111F-4714-9D38-793519DC8724}
+		{3CFAE0BF-192B-4FA3-A0A2-0CCF8E1F7028} = {15E0932C-22A4-456B-95A6-49412A2B2AE6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E81041B5-F4FA-4764-A934-C90FFE6BD452}

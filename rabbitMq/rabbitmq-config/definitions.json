@@ -34,9 +34,6 @@
       }
     }
   ],
-  "vhosts": [{
-    "name": "/"
-  }],
   "exchanges": [
   ],
   "bindings": [

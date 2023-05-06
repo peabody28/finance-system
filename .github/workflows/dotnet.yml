@@ -46,4 +46,4 @@ jobs:
             cd ${{ secrets.FINANCE_SYSTEM_PROJECT_DIR }};
             git checkout ${{ github.head_ref || github.ref_name }};
             git pull origin ${{ github.head_ref || github.ref_name }};
-            docker-compose up --build -d;
+            docker-compose --build -d up; # -f docker-compose.yml -f rabbitMq/docker-compose.yml -f elk/docker-compose.yml 
