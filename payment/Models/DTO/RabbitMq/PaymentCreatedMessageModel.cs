@@ -18,14 +18,5 @@ namespace payment.Models.DTO.RabbitMq
 
         [JsonProperty("created")]
         public DateTime Created { get; set; }
-
-        public PaymentCreatedMessageModel(Guid id, string walletNumber, decimal amount, string balanceOperationTypeCode, DateTime created)
-        {
-            Id = id;
-            WalletNumber = walletNumber;
-            Amount = amount;
-            BalanceOperationTypeCode = balanceOperationTypeCode;
-            Created = created;
-        }
     }
 }

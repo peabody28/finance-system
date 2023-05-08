@@ -13,10 +13,25 @@ using payment.Validations;
 using Serilog.Sinks.Elasticsearch;
 using Serilog;
 using System.Text;
+using RabbitMQ.Client;
+using payment.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// RabbitMQ
+var factory = new ConnectionFactory()
+{
+    HostName = builder.Configuration.GetValue<string>("RabbitMq:Host:Name"),
+    Port = builder.Configuration.GetValue<int>("RabbitMq:Host:Port"),
+    UserName = builder.Configuration.GetValue<string>("RabbitMq:UserName"),
+    Password = builder.Configuration.GetValue<string>("RabbitMq:Password")
+};
+
+builder.Services.AddSingleton(factory);
+
+builder.Services.AddTransient<RabbitMqConnection>();
 
 builder.Services.AddControllers();
 

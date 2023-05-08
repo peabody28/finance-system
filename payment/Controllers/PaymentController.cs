@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
+using payment.ModelBuilders;
 using payment.Models.Payment;
 
 namespace payment.Controllers
@@ -35,12 +36,7 @@ namespace payment.Controllers
 
             var payments = paymentRepository.Get(wallet);
 
-            return payments.Select(p => new PaymentModel 
-            {
-                WalletNumber = p.Wallet.Number,
-                BalanceOperationTypeCode = p.BalanceOperationType.Code,
-                Amount = p.Amount
-            }).OrderBy(p => p.WalletNumber);
+            return payments.Select(PaymentModelBuilder.Build).OrderBy(p => p.WalletNumber);
         }
 
         [Authorize]

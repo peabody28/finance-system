@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using payment.Interfaces.Operations;
+using payment.Models;
 using RabbitMQ.Client;
 using System.Text;
 
@@ -7,20 +8,11 @@ namespace payment.Operations
 {
     public class RabbitMqOperation : IRabbitMqOperation
     {
-        private readonly string hostName;
+        private readonly IServiceProvider serviceProvider;
 
-        private readonly int port;
-
-        private readonly string userName;
-
-        private readonly string password;
-
-        public RabbitMqOperation(IConfiguration configuration)
+        public RabbitMqOperation(IServiceProvider serviceProvider)
         {
-            hostName = configuration.GetValue<string>("RabbitMq:Host:Name");
-            port = configuration.GetValue<int>("RabbitMq:Host:Port");
-            userName = configuration.GetValue<string>("RabbitMq:UserName");
-            password = configuration.GetValue<string>("RabbitMq:Password");
+            this.serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -33,23 +25,28 @@ namespace payment.Operations
         /// <param name="routingKey"></param>
         public void SendMessage<T>(T data, string queue, string exchange = "", string? routingKey = null)
         {
-            var message = JsonConvert.SerializeObject(data, Formatting.Indented);
-
             if (string.IsNullOrWhiteSpace(routingKey))
                 routingKey = queue;
 
-            var factory = new ConnectionFactory() { HostName = hostName, Port = port, UserName = userName, Password = password };
+            using var connection = serviceProvider.GetRequiredService<RabbitMqConnection>();
 
-            using var connection = factory.CreateConnection();
+            var props = CreateDefaultProperties(connection.channel);
 
-            using var channel = connection.CreateModel();
+            connection.channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: props, body: GetBody(data));
+        }
 
-            var body = Encoding.UTF8.GetBytes(message);
+        private byte[] GetBody<T>(T data)
+        {
+            var message = JsonConvert.SerializeObject(data, Formatting.Indented);
+            return Encoding.UTF8.GetBytes(message);
+        }
 
+        private static IBasicProperties CreateDefaultProperties(IModel channel)
+        {
             var props = channel.CreateBasicProperties();
             props.ContentType = System.Net.Mime.MediaTypeNames.Application.Json;
 
-            channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: props, body: body);
+            return props;
         }
     }
 }

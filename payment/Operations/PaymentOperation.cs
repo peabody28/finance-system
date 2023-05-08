@@ -2,7 +2,7 @@
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
-using payment.Models.DTO.RabbitMq;
+using payment.ModelBuilders;
 
 namespace payment.Operations
 {
@@ -11,7 +11,6 @@ namespace payment.Operations
         private readonly IPaymentRepository paymentRepository;
 
         private readonly IBalanceOperationTypeOperation balanceOperationTypeOperation;
-
 
         private readonly ICurrencyRateOperation currencyRateOperation;
 
@@ -37,16 +36,8 @@ namespace payment.Operations
             var payment = paymentRepository.Create(wallet, balanceOperationType, amount);
             var isPaymentCreated = payment != null;
 
-            if(isPaymentCreated)
-            {
-                logger.LogInformation("Payment created: paymentId: {id}, walletNumber: {walletNumber}, amount: {amount}, currencyCode: {currencyCode}",
-                    payment.Id, payment.Wallet.Number, payment.Amount, payment.Wallet.Currency.Code);
-
-                var paymentCreatedMessage = new PaymentCreatedMessageModel(payment.Id, payment.Wallet.Number, payment.Amount, payment.BalanceOperationType.Code, payment.Created);
-                var paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
-                
-                rabbitMqOperation.SendMessage(paymentCreatedMessage, paymentCreateQueueName);
-            }
+            if (isPaymentCreated)
+                SendWalletCreateMessage(payment);
 
             return isPaymentCreated;
         }
@@ -73,6 +64,17 @@ namespace payment.Operations
                 paymentRepository.RollbackTransaction();
                 return false;
             }
+        }
+
+        private void SendWalletCreateMessage(IPayment payment)
+        {
+            logger.LogInformation("Payment created: paymentId: {id}, walletNumber: {walletNumber}, amount: {amount}, currencyCode: {currencyCode}",
+                    payment.Id, payment.Wallet.Number, payment.Amount, payment.Wallet.Currency.Code);
+
+            var paymentCreatedMessage = PaymentModelBuilder.BuildCreateMessage(payment);
+            var paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
+
+            rabbitMqOperation.SendMessage(paymentCreatedMessage, paymentCreateQueueName);
         }
     }
 }
