@@ -11,6 +11,7 @@ using wallet.Entities;
 using wallet.Interfaces.Entities;
 using wallet.Interfaces.Operations;
 using wallet.Interfaces.Repositories;
+using wallet.Models;
 using wallet.Operations;
 using wallet.Repositories;
 
@@ -48,6 +49,8 @@ var factory = new ConnectionFactory()
 };
 
 builder.Services.AddSingleton(factory);
+
+builder.Services.AddTransient<RabbitMqConnection>();
 
 Log.Logger = new LoggerConfiguration()
         .Enrich.FromLogContext()
