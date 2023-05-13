@@ -8,28 +8,16 @@ namespace payment.system.custompay.worker
 {
     public class PaymentCreateActionListener : BackgroundService
     {
-        private readonly ILogger<PaymentCreateActionListener> _logger;
+        private readonly ILogger<PaymentCreateActionListener> logger;
 
-        private readonly IConnection _connection;
-
-        private readonly IModel _channel;
+        private readonly IServiceProvider serviceProvider;
 
         private readonly string _paymentCreateQueueName;
 
-        public PaymentCreateActionListener(ILogger<PaymentCreateActionListener> logger, IConfiguration configuration)
+        public PaymentCreateActionListener(ILogger<PaymentCreateActionListener> logger, IConfiguration configuration, IServiceProvider serviceProvider)
         {
-            _logger = logger;
-
-            var factory = new ConnectionFactory
-            {
-                HostName = configuration.GetValue<string>("RabbitMq:Host:Name"),
-                Port = configuration.GetValue<int>("RabbitMq:Host:Port"),
-                UserName = configuration.GetValue<string>("RabbitMq:UserName"),
-                Password = configuration.GetValue<string>("RabbitMq:Password")
-            };
-
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
+            this.logger = logger;
+            this.serviceProvider = serviceProvider;
 
             _paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
         }
@@ -38,25 +26,27 @@ namespace payment.system.custompay.worker
         {
             stoppingToken.ThrowIfCancellationRequested();
 
-            var consumer = new EventingBasicConsumer(_channel);
+            var connectionFactory = serviceProvider.GetRequiredService<ConnectionFactory>();
+            var connection = connectionFactory.CreateConnection();
+            var channel = connection.CreateModel();
 
-            consumer.Received += ProcessMessage;
+            var consumer = new EventingBasicConsumer(channel);
 
-            _channel.BasicConsume(_paymentCreateQueueName, false, consumer);
+            consumer.Received += (ch, basicDeliverEventArgs) =>
+            {
+                var content = Encoding.UTF8.GetString(basicDeliverEventArgs.Body.ToArray());
+
+                var model = JsonConvert.DeserializeObject<PaymentCreateMessageModel>(content);
+
+                // some actions like external API call to payment system
+                logger.LogInformation("Payment with id {id} is processed", model.Id);
+
+                channel.BasicAck(basicDeliverEventArgs.DeliveryTag, false);
+            };
+
+            channel.BasicConsume(_paymentCreateQueueName, false, consumer);
 
             await Task.Delay(3000, stoppingToken); 
-        }
-
-        private void ProcessMessage(object? ch, BasicDeliverEventArgs basicDeliverEventArgs)
-        {
-            var content = Encoding.UTF8.GetString(basicDeliverEventArgs.Body.ToArray());
-
-            var model = JsonConvert.DeserializeObject<PaymentCreateMessageModel>(content);
-
-            // some actions like external API call to payment system
-            _logger.LogInformation("Payment with id {id} is processed", model.Id);
-
-            _channel.BasicAck(basicDeliverEventArgs.DeliveryTag, false);
         }
     }
 }

@@ -1,10 +1,22 @@
 using payment.system.custompay.worker;
 using Serilog.Sinks.Elasticsearch;
 using Serilog;
+using RabbitMQ.Client;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
+        var factory = new ConnectionFactory()
+        {
+            HostName = context.Configuration.GetValue<string>("RabbitMq:Host:Name"),
+            Port = context.Configuration.GetValue<int>("RabbitMq:Host:Port"),
+            UserName = context.Configuration.GetValue<string>("RabbitMq:UserName"),
+            Password = context.Configuration.GetValue<string>("RabbitMq:Password"),
+            VirtualHost = context.Configuration.GetValue<string>("RabbitMq:VirtualHostName"),
+        };
+
+        services.AddSingleton(factory);
+
         services.AddHostedService<PaymentCreateActionListener>();
     })
     .UseSerilog((context, loggerConfiguration) =>

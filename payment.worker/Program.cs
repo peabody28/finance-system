@@ -14,7 +14,8 @@ IHost host = Host.CreateDefaultBuilder(args)
             HostName = context.Configuration.GetValue<string>("RabbitMq:Host:Name"),
             Port = context.Configuration.GetValue<int>("RabbitMq:Host:Port"),
             UserName = context.Configuration.GetValue<string>("RabbitMq:UserName"),
-            Password = context.Configuration.GetValue<string>("RabbitMq:Password")
+            Password = context.Configuration.GetValue<string>("RabbitMq:Password"),
+            VirtualHost = context.Configuration.GetValue<string>("RabbitMq:VirtualHostName"),
         };
 
         services.AddSingleton(factory);

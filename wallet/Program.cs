@@ -45,7 +45,8 @@ var factory = new ConnectionFactory()
     HostName = builder.Configuration.GetValue<string>("RabbitMq:Host:Name"),
     Port = builder.Configuration.GetValue<int>("RabbitMq:Host:Port"),
     UserName = builder.Configuration.GetValue<string>("RabbitMq:UserName"),
-    Password = builder.Configuration.GetValue<string>("RabbitMq:Password")
+    Password = builder.Configuration.GetValue<string>("RabbitMq:Password"),
+    VirtualHost = builder.Configuration.GetValue<string>("RabbitMq:VirtualHostName"),
 };
 
 builder.Services.AddSingleton(factory);
