@@ -4,20 +4,24 @@
     "password": "1234",
     "tags": "administrator"
   }],
-  "vhosts": [{
-    "name": "/"
-  }],
-  "permissions": [{
-    "user": "peabody28",
-    "vhost": "/",
-    "configure": ".*",
-    "write": ".*",
-    "read": ".*"
-  }],
+  "vhosts": [
+    {
+      "name": "pbdhost"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "peabody28",
+      "vhost": "pbdhost",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
   "queues": [
     {
       "name": "wallet-create",
-      "vhost": "/",
+      "vhost": "pbdhost",
       "durable": false,
       "auto_delete": false,
       "arguments": {
@@ -26,7 +30,7 @@
     },
     {
       "name": "payment-create",
-      "vhost": "/",
+      "vhost": "pbdhost",
       "durable": false,
       "auto_delete": false,
       "arguments": {
