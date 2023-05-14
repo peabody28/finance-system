@@ -10,43 +10,85 @@ namespace payment.system.custompay.worker
     {
         private readonly ILogger<PaymentCreateActionListener> logger;
 
-        private readonly IServiceProvider serviceProvider;
+        private readonly IModel channel;
 
         private readonly string _paymentCreateQueueName;
 
-        public PaymentCreateActionListener(ILogger<PaymentCreateActionListener> logger, IConfiguration configuration, IServiceProvider serviceProvider)
+        public PaymentCreateActionListener(ILogger<PaymentCreateActionListener> logger, IConfiguration configuration, ConnectionFactory connectionFactory)
         {
             this.logger = logger;
-            this.serviceProvider = serviceProvider;
 
             _paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
+
+            var connection = connectionFactory.CreateConnection();
+            channel = connection.CreateModel();
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
 
-            var connectionFactory = serviceProvider.GetRequiredService<ConnectionFactory>();
-            var connection = connectionFactory.CreateConnection();
-            var channel = connection.CreateModel();
-
             var consumer = new EventingBasicConsumer(channel);
 
-            consumer.Received += (ch, basicDeliverEventArgs) =>
-            {
-                var content = Encoding.UTF8.GetString(basicDeliverEventArgs.Body.ToArray());
-
-                var model = JsonConvert.DeserializeObject<PaymentCreateMessageModel>(content);
-
-                // some actions like external API call to payment system
-                logger.LogInformation("Payment with id {id} is processed", model.Id);
-
-                channel.BasicAck(basicDeliverEventArgs.DeliveryTag, false);
-            };
+            SetConsumerHandler(consumer);
 
             channel.BasicConsume(_paymentCreateQueueName, false, consumer);
 
-            await Task.Delay(3000, stoppingToken); 
+            return Task.CompletedTask;
+        }
+
+        private void SetConsumerHandler(EventingBasicConsumer consumer)
+        {
+            consumer.Received += (sender, basicDeliverEventArgs) =>
+            {
+                var isMessageSuccessfulyProcessed = TryProcessMessage(basicDeliverEventArgs.Body);
+
+                if (isMessageSuccessfulyProcessed)
+                    consumer.Model.BasicAck(basicDeliverEventArgs.DeliveryTag, false);
+                else
+                    consumer.Model.BasicNack(basicDeliverEventArgs.DeliveryTag, false, false);
+            };
+        }
+
+        private bool TryProcessMessage(ReadOnlyMemory<byte> data)
+        {
+            var isPaymentProcessed = false;
+
+            if (TryParsePaymentCreateModel(data, out var model))
+            {
+                isPaymentProcessed = true;
+
+                PaymentCreateMessageProcessedLog(model.Id, isPaymentProcessed);
+            }
+
+            return isPaymentProcessed;
+        }
+
+        private bool TryParsePaymentCreateModel(ReadOnlyMemory<byte> data, out PaymentCreateMessageModel? model)
+        {
+            model = default;
+
+            try
+            {
+                var content = Encoding.UTF8.GetString(data.ToArray());
+                model = JsonConvert.DeserializeObject<PaymentCreateMessageModel>(content);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                logger.LogError("Model Deserializing Failed, data: {data} ", data);
+                return false;
+            }
+        }
+
+        private void PaymentCreateMessageProcessedLog(Guid paymentId, bool isSuccess)
+        {
+            if (isSuccess)
+                logger.LogInformation("Payment ({id}) create message procceed", paymentId);
+            else
+                logger.LogError("Payment ({id}) cannot be processed", paymentId);
         }
     }
+
 }
