@@ -7,12 +7,22 @@
   "vhosts": [
     {
       "name": "pbdhost"
+    },
+    {
+      "name": "pbdhost-dev"
     }
   ],
   "permissions": [
     {
       "user": "peabody28",
       "vhost": "pbdhost",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "peabody28",
+      "vhost": "pbdhost-dev",
       "configure": ".*",
       "write": ".*",
       "read": ".*"
@@ -31,6 +41,24 @@
     {
       "name": "payment-create",
       "vhost": "pbdhost",
+      "durable": false,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "wallet-create",
+      "vhost": "pbdhost-dev",
+      "durable": false,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "payment-create",
+      "vhost": "pbdhost-dev",
       "durable": false,
       "auto_delete": false,
       "arguments": {
