@@ -8,18 +8,14 @@ namespace wallet.tests.Integration
 {
     public class GetWalletTest
     {
-        private WalletWebApplicationFactory factory;
+        private readonly WalletWebApplicationFactory factory = new WalletWebApplicationFactory();
 
-        private string WalletNumber = "ASDF546F";
+        private readonly string WalletNumber = "ASDF546F";
 
         [SetUp]
         public void Setup()
         {
-            factory = new WalletWebApplicationFactory();
-
-            var dbContext = factory.GetDbContext();
-
-            SetupDbContext(dbContext);
+            AddWalletRowToDatabase();
         }
 
         [TearDown]
@@ -75,21 +71,24 @@ namespace wallet.tests.Integration
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
-        private void SetupDbContext(WalletDbContext dbContext)
+        private void AddWalletRowToDatabase()
         {
-            dbContext.Database.EnsureCreated();
+            var dbContext = SetupDbContext();
 
-            AddWalletRowToDatabase(dbContext);
-        }
-
-        private void AddWalletRowToDatabase(WalletDbContext dbContext)
-        {
             var user = new UserEntity { Id = Guid.NewGuid(), Name = factory.UserName };
             var currency = new CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" };
             var wallet = new WalletEntity { Id = Guid.NewGuid(), Currency = currency, Number = WalletNumber, User = user };
             dbContext.Wallet.Add(wallet);
 
             dbContext.SaveChanges();
+        }
+
+        private WalletDbContext SetupDbContext()
+        {
+            var dbContext = factory.GetDbContext();
+            dbContext.Database.EnsureCreated();
+
+            return dbContext;
         }
     }
 }

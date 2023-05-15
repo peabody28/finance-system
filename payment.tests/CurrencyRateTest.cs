@@ -12,11 +12,7 @@ namespace payment.tests
         [SetUp]
         public void Setup()
         {
-            var mock = new Mock<ICurrencyApiOperation>();
-            mock.Setup(a => a.GetRate(It.IsAny<string>(), It.IsAny<string>())).Returns(0.94m);
-            mock.Setup(a => a.GetRate(CurrencyConstants.UnknownCurrencyCode, It.IsAny<string>())).Returns((decimal?)null);
-
-            currencyRateOperation = new CurrencyRateOperation(mock.Object);
+            MockCurrencyRateOperation();
         }
 
         [Test]
@@ -54,6 +50,26 @@ namespace payment.tests
 
             // Assert
             Assert.That(rate, Is.Null);
+        }
+
+        private void MockCurrencyRateOperation()
+        {
+            var mock = new Mock<ICurrencyApiOperation>();
+
+            WhenAnyCurrenciesThenAnyAmount(mock);
+            WhenAtLeastOneUnknowCurrencyThenNull(mock);
+
+            currencyRateOperation = new CurrencyRateOperation(mock.Object);
+        }
+
+        private static void WhenAnyCurrenciesThenAnyAmount(Mock<ICurrencyApiOperation> mock)
+        {
+            mock.Setup(a => a.GetRate(It.IsAny<string>(), It.IsAny<string>())).Returns(0.94m);
+        }
+
+        private static void WhenAtLeastOneUnknowCurrencyThenNull(Mock<ICurrencyApiOperation> mock)
+        {
+            mock.Setup(a => a.GetRate(CurrencyConstants.UnknownCurrencyCode, It.IsAny<string>())).Returns((decimal?)null);
         }
     }
 }

@@ -8,16 +8,12 @@ namespace wallet.tests.Integration
 {
     public class WalletCreateTest
     {
-        private WalletWebApplicationFactory factory;
+        private readonly WalletWebApplicationFactory factory = new WalletWebApplicationFactory();
 
         [SetUp]
         public void Setup()
         {
-            factory = new WalletWebApplicationFactory();
-
-            var dbContext = factory.GetDbContext();
-
-            SetupDbContext(dbContext);
+            AddCurrencyRowToDatabase();
         }
 
         [TearDown]
@@ -31,7 +27,6 @@ namespace wallet.tests.Integration
         {
             // Arrange
             var payload = "{\"currencyCode\": \"USD\" }";
-
             HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
 
             var client = factory.CreateClient();
@@ -43,18 +38,21 @@ namespace wallet.tests.Integration
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
-        private static void SetupDbContext(WalletDbContext dbContext)
+        private void AddCurrencyRowToDatabase()
         {
-            dbContext.Database.EnsureCreated();
+            var dbContext = SetupDbContext();
 
-            AddCurrencyRowToDatabase(dbContext);
-        }
-
-        private static void AddCurrencyRowToDatabase(WalletDbContext dbContext)
-        {
             dbContext.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" });
 
             dbContext.SaveChanges();
+        }
+
+        private WalletDbContext SetupDbContext()
+        {
+            var dbContext = factory.GetDbContext();
+            dbContext.Database.EnsureCreated();
+
+            return dbContext;
         }
     }
 }
