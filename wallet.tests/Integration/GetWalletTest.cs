@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Net;
 using wallet.Entities;
 using wallet.Repositories;
@@ -18,17 +17,9 @@ namespace wallet.tests.Integration
         {
             factory = new WalletWebApplicationFactory();
 
-            var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
+            var dbContext = factory.GetDbContext();
 
-            context.Database.EnsureCreated();
-
-            var user = new UserEntity { Id = Guid.NewGuid(), Name = factory.UserName };
-            var currency = new CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" };
-            var wallet = new WalletEntity { Id = Guid.NewGuid(), Currency = currency, Number = WalletNumber, User = user };
-
-            context.Wallet.Add(wallet);
-
-            context.SaveChanges();
+            SetupDbContext(dbContext);
         }
 
         [TearDown]
@@ -82,6 +73,23 @@ namespace wallet.tests.Integration
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        private void SetupDbContext(WalletDbContext dbContext)
+        {
+            dbContext.Database.EnsureCreated();
+
+            AddWalletRowToDatabase(dbContext);
+        }
+
+        private void AddWalletRowToDatabase(WalletDbContext dbContext)
+        {
+            var user = new UserEntity { Id = Guid.NewGuid(), Name = factory.UserName };
+            var currency = new CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" };
+            var wallet = new WalletEntity { Id = Guid.NewGuid(), Currency = currency, Number = WalletNumber, User = user };
+            dbContext.Wallet.Add(wallet);
+
+            dbContext.SaveChanges();
         }
     }
 }

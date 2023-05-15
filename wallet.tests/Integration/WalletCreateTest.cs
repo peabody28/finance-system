@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Net;
 using System.Text;
 using wallet.Repositories;
@@ -16,13 +15,9 @@ namespace wallet.tests.Integration
         {
             factory = new WalletWebApplicationFactory();
 
-            var context = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
+            var dbContext = factory.GetDbContext();
 
-            context.Database.EnsureCreated();
-
-            context.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" });
-
-            context.SaveChanges();
+            SetupDbContext(dbContext);
         }
 
         [TearDown]
@@ -46,6 +41,20 @@ namespace wallet.tests.Integration
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        private static void SetupDbContext(WalletDbContext dbContext)
+        {
+            dbContext.Database.EnsureCreated();
+
+            AddCurrencyRowToDatabase(dbContext);
+        }
+
+        private static void AddCurrencyRowToDatabase(WalletDbContext dbContext)
+        {
+            dbContext.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" });
+
+            dbContext.SaveChanges();
         }
     }
 }
