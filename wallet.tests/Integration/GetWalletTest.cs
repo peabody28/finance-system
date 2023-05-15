@@ -18,12 +18,6 @@ namespace wallet.tests.Integration
             AddWalletRowToDatabase();
         }
 
-        [TearDown]
-        public void Teardown()
-        {
-            factory?.Dispose();
-        }
-
         [Test]
         public async Task GetWalletsTest()
         {

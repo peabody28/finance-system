@@ -47,7 +47,7 @@ namespace payment.tests
         public void TestSomething()
         {
             // Arrange
-            var walletFrom = UnknowCurrencyWalletStub();
+            var walletFrom = WalletStub(CurrencyConstants.USD);
             var walletTo = WalletStub(CurrencyConstants.EUR);
 
             var paymentOperation = new PaymentOperation(paymentRepository, balanceOperationTypeOperation, currencyRateOperation, rabbitMqOperation, null, logger);
@@ -92,7 +92,6 @@ namespace payment.tests
             var loggerMock = new Mock<ILogger<PaymentOperation>>();
             logger = loggerMock.Object;
         }
-
 
         #endregion
 
