@@ -17,5 +17,17 @@ namespace currency.tests.Integration.Core
         {
             return Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
         }
+
+        public void SetupDatabase()
+        {
+            var dbContext = Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
+            dbContext.Database.EnsureCreated();
+        }
+
+        public void DeleteDatabase()
+        {
+            var dbContext = Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
+            dbContext.Database.EnsureDeleted();
+        }
     }
 }

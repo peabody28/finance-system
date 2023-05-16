@@ -2,6 +2,7 @@
 using currency.Repositories;
 using currency.tests.Integration.Core;
 using currency.tests.Integration.Core.Constants;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.Net;
 
@@ -12,21 +13,23 @@ namespace currency.tests.Integration
         private readonly CurrencyWebApplicationFactory factory = new CurrencyWebApplicationFactory();
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            AddCurrencyRateFromUsdToEur();
+            factory.SetupDatabase();
         }
 
         [TearDown]
-        public void Teardown()
+        public void TearDown()
         {
-            factory?.Dispose();
+            factory.DeleteDatabase();
         }
 
         [Test]
         public async Task GetRateTest()
         {
             // Arrange
+            AddCurrencyRateFromUsdToEur();
+
             var client = factory.CreateClient();
 
             // Act 
@@ -36,17 +39,9 @@ namespace currency.tests.Integration
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
-        private CurrencyDbContext SetupDbContext()
-        {
-            var dbContext = factory.GetDbContext();
-            dbContext.Database.EnsureCreated();
-
-            return dbContext;
-        }
-
         private void AddCurrencyRateFromUsdToEur()
         {
-            var dbContext = SetupDbContext();
+            var dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
 
             var currencyFrom = new CurrencyEntity { Id = Guid.NewGuid(), Code = CurrencyConstants.UsdCurrencyCode };
             var currencyTo = new CurrencyEntity { Id = Guid.NewGuid(), Code = CurrencyConstants.EurCurrencyCode };
