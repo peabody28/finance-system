@@ -16,11 +16,6 @@ namespace wallet.tests.Integration.Core
             UserRole = TestUserConstants.UserRole;
         }
 
-        public WalletDbContext GetDbContext()
-        {
-            return Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
-        }
-
         private void RemoveRabbitMqOperationService(IServiceCollection services)
         {
             ServiceDescriptor item = services.SingleOrDefault((ServiceDescriptor d) => d.ServiceType.Equals(typeof(IRabbitMqOperation)));
@@ -44,6 +39,18 @@ namespace wallet.tests.Integration.Core
                 RemoveRabbitMqOperationService(services);
                 AddRabbitMqOperationService(services);
             });
+        }
+
+        public void SetupDatabase()
+        {
+            var dbContext = Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
+            dbContext.Database.EnsureCreated();
+        }
+
+        public void DeleteDatabase()
+        {
+            var dbContext = Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
+            dbContext.Database.EnsureDeleted();
         }
     }
 }

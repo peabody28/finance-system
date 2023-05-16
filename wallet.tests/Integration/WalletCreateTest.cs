@@ -1,8 +1,11 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using wallet.Repositories;
 using wallet.tests.Integration.Core;
+using wallet.tests.Integration.Core.Constants;
 
 namespace wallet.tests.Integration
 {
@@ -13,46 +16,50 @@ namespace wallet.tests.Integration
         [SetUp]
         public void Setup()
         {
-            AddCurrencyRowToDatabase();
+            factory.SetupDatabase();
         }
 
         [TearDown]
-        public void Teardown()
+        public void TearDown()
         {
-            factory?.Dispose();
+            factory.DeleteDatabase();
         }
 
         [Test]
         public async Task CreateWalletTest()
         {
             // Arrange
-            var payload = "{\"currencyCode\": \"USD\" }";
-            HttpContent content = new StringContent(payload, Encoding.UTF8, "application/json");
+            AddCurrencyToDatabase(TestCurrencyConstants.UsdCurrencyCode);
+            var requestContent = GetCreateWalletRequestContent(TestCurrencyConstants.UsdCurrencyCode);
 
             var client = factory.CreateClient();
 
             // Act 
-            var result = await client.PostAsync("/wallet/", content);
+            var result = await client.PostAsync("/wallet/", requestContent);
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
-        private void AddCurrencyRowToDatabase()
+        private static HttpContent GetCreateWalletRequestContent(string walletCurrencyCode)
         {
-            var dbContext = SetupDbContext();
+            var createWalletRequest = new
+            {
+                currencyCode = walletCurrencyCode
+            };
 
-            dbContext.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" });
+            string jsonString = JsonSerializer.Serialize(createWalletRequest);
 
-            dbContext.SaveChanges();
+            return new StringContent(jsonString, Encoding.UTF8, "application/json");
         }
 
-        private WalletDbContext SetupDbContext()
+        private void AddCurrencyToDatabase(string currencyCode)
         {
-            var dbContext = factory.GetDbContext();
-            dbContext.Database.EnsureCreated();
+            var dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 
-            return dbContext;
+            dbContext.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = currencyCode });
+
+            dbContext.SaveChanges();
         }
     }
 }

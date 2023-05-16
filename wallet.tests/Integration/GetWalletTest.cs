@@ -1,8 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using System.Net;
 using wallet.Entities;
 using wallet.Repositories;
 using wallet.tests.Integration.Core;
+using wallet.tests.Integration.Core.Constants;
 
 namespace wallet.tests.Integration
 {
@@ -10,12 +12,16 @@ namespace wallet.tests.Integration
     {
         private readonly WalletWebApplicationFactory factory = new WalletWebApplicationFactory();
 
-        private readonly string WalletNumber = "ASDF546F";
-
         [SetUp]
         public void Setup()
         {
-            AddWalletRowToDatabase();
+            factory.SetupDatabase();
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            factory.DeleteDatabase();
         }
 
         [Test]
@@ -31,27 +37,20 @@ namespace wallet.tests.Integration
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
-        /// <summary>
-        /// Only for MS role
-        /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task GetWalletByNumberTest()
         {
             // Arrange
+            AddWalletToDatabase(factory.UserName, TestWalletConstants.WalletNumber);
             var client = factory.CreateClient();
 
             // Act 
-            var result = await client.GetAsync($"/wallet/{WalletNumber}");
+            var result = await client.GetAsync($"/wallet/{TestWalletConstants.WalletNumber}");
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
-        /// <summary>
-        /// Only for MS role
-        /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task GetUndefinedWalletByNumberTest()
         {
@@ -59,30 +58,22 @@ namespace wallet.tests.Integration
             var client = factory.CreateClient();
 
             // Act 
-            var result = await client.GetAsync("/wallet/XXX");
+            var result = await client.GetAsync($"/wallet/{TestWalletConstants.UndefinedWalletNumber}");
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
-        private void AddWalletRowToDatabase()
+        private void AddWalletToDatabase(string walletOwnerUserName, string walletNumber)
         {
-            var dbContext = SetupDbContext();
+            var dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
 
-            var user = new UserEntity { Id = Guid.NewGuid(), Name = factory.UserName };
-            var currency = new CurrencyEntity { Id = Guid.NewGuid(), Code = "USD" };
-            var wallet = new WalletEntity { Id = Guid.NewGuid(), Currency = currency, Number = WalletNumber, User = user };
+            var user = new UserEntity { Id = Guid.NewGuid(), Name = walletOwnerUserName };
+            var currency = new CurrencyEntity { Id = Guid.NewGuid(), Code = TestCurrencyConstants.AnyCurrencyCode };
+            var wallet = new WalletEntity { Id = Guid.NewGuid(), Currency = currency, Number = walletNumber, User = user };
             dbContext.Wallet.Add(wallet);
 
             dbContext.SaveChanges();
-        }
-
-        private WalletDbContext SetupDbContext()
-        {
-            var dbContext = factory.GetDbContext();
-            dbContext.Database.EnsureCreated();
-
-            return dbContext;
         }
     }
 }
