@@ -4,12 +4,6 @@ namespace payment.tests
 {
     internal class AmountHelperTest
     {
-        [SetUp]
-        public void Setup()
-        {
-            
-        }
-
         [Test]
         public void TestGreaterThanZero([Values(15)] decimal amount, [Values(0.6)] decimal rate)
         {
