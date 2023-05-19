@@ -1,6 +1,8 @@
+using currency.Exceptions;
 using currency.Interfaces.Repositories;
 using currency.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace currency.Controllers
 {
@@ -20,12 +22,14 @@ namespace currency.Controllers
 
         [HttpGet]
         [Route("rate")]
-        public CurrencyRateModel CurrencyRate([FromQuery] CurrencyRateRequestModel model)
+        public CurrencyRateModel? CurrencyRate([FromQuery] CurrencyRateRequestModel model)
         {
             var currencyFrom = currencyRepository.Get(model.CurrencyFromCode)!;
             var currencyTo = currencyRepository.Get(model.CurrencyToCode)!;
-
+            
             var currencyRate = currencyRateRepository.Get(currencyFrom, currencyTo);
+            if (currencyRate == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
             return new CurrencyRateModel { Rate = currencyRate.Value, Date = currencyRate.Date };
         }
