@@ -1,7 +1,7 @@
 ﻿using currency.Entities;
 using currency.Repositories;
+using currency.tests.Constants;
 using currency.tests.Integration.Core;
-using currency.tests.Integration.Core.Constants;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.Net;

@@ -1,4 +1,4 @@
-﻿namespace currency.tests.Integration.Core.Constants
+﻿namespace currency.tests.Constants
 {
     internal class TestUserConstants
     {

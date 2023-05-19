@@ -1,7 +1,7 @@
-﻿using currency.tests.Integration.Core.Constants;
-using Testing.Integration.Helper.Sqlite;
+﻿using Testing.Integration.Helper.Sqlite;
 using currency.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using currency.tests.Constants;
 
 namespace currency.tests.Integration.Core
 {
