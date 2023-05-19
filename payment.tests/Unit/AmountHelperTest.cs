@@ -1,6 +1,6 @@
 ﻿using payment.Helpers;
 
-namespace payment.tests
+namespace payment.tests.Unit
 {
     internal class AmountHelperTest
     {

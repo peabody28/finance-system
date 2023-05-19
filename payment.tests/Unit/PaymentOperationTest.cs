@@ -5,7 +5,7 @@ using payment.Interfaces.Repositories;
 using payment.Operations;
 using payment.tests.Constants;
 
-namespace payment.tests
+namespace payment.tests.Unit
 {
     internal class PaymentOperationTest
     {
@@ -105,7 +105,7 @@ namespace payment.tests
             mock.SetupSequence(a => a.CommitTransaction()).Pass();
             mock.SetupSequence(a => a.RollbackTransaction()).Pass();
         }
-  
+
         private static void MockPaymentCreating(Mock<IPaymentRepository> mock)
         {
             mock.Setup(a => a.Create(It.IsAny<IWallet>(), It.IsAny<IBalanceOperationType>(), It.IsAny<decimal>())).Returns(It.IsNotNull<IPayment>());

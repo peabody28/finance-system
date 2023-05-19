@@ -3,7 +3,7 @@ using payment.Interfaces.Operations;
 using payment.Operations;
 using payment.tests.Constants;
 
-namespace payment.tests
+namespace payment.tests.Unit
 {
     public class CurrencyRateTest
     {
