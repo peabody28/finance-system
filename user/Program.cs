@@ -1,6 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.OpenApi.Models;
 using user.Entities;
 using user.Interfaces.Entities;
 using user.Interfaces.Operations;
@@ -31,6 +31,12 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.StopOnFirstFailure;
 
+// Swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,5 +44,11 @@ var app = builder.Build();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API V1");
+});
 
 app.Run();
