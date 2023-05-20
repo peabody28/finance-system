@@ -4,7 +4,7 @@ using Moq;
 using Testing.Integration.Helper.Sqlite;
 using wallet.Interfaces.Operations;
 using wallet.Repositories;
-using wallet.tests.Integration.Core.Constants;
+using wallet.tests.Constants;
 
 namespace wallet.tests.Integration.Core
 {

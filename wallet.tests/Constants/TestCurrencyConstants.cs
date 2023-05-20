@@ -1,4 +1,4 @@
-﻿namespace wallet.tests.Integration.Core.Constants
+﻿namespace wallet.tests.Constants
 {
     internal class TestCurrencyConstants
     {

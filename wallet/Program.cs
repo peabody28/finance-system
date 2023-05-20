@@ -51,8 +51,6 @@ var factory = new ConnectionFactory()
 
 builder.Services.AddSingleton(factory);
 
-builder.Services.AddTransient<RabbitMqConnection>();
-
 Log.Logger = new LoggerConfiguration()
         .Enrich.FromLogContext()
         .Enrich.WithMachineName()

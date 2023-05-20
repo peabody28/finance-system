@@ -3,8 +3,8 @@ using NUnit.Framework;
 using System.Net;
 using wallet.Entities;
 using wallet.Repositories;
+using wallet.tests.Constants;
 using wallet.tests.Integration.Core;
-using wallet.tests.Integration.Core.Constants;
 
 namespace wallet.tests.Integration
 {
