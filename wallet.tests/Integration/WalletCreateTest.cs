@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using wallet.Models.DTO.RabbitMq;
 using wallet.Repositories;
 using wallet.tests.Constants;
 using wallet.tests.Integration.Core;
@@ -11,18 +12,26 @@ namespace wallet.tests.Integration
 {
     public class WalletCreateTest
     {
-        private readonly WalletWebApplicationFactory factory = new WalletWebApplicationFactory();
+        private RabbitMqContainerFixture containerFixture;
+
+        private RabbitWalletWebApplicationFactory factory;
 
         [SetUp]
         public void Setup()
         {
+            containerFixture = new RabbitMqContainerFixture();
+            containerFixture.CreateQueue(RabbitMqConstants.RabbitMqTestQueueName);
+
+            factory = new RabbitWalletWebApplicationFactory(containerFixture.ConnectionFactory);
             factory.SetupDatabase();
         }
 
         [TearDown]
         public void TearDown()
         {
-            factory.DeleteDatabase();
+            factory?.DeleteDatabase();
+            factory?.Dispose();
+            containerFixture?.Dispose();
         }
 
         [Test]
@@ -36,9 +45,19 @@ namespace wallet.tests.Integration
 
             // Act 
             var result = await client.PostAsync("/wallet/", requestContent);
+            var rabbitMessage = GetMessageFromQueue(RabbitMqConstants.RabbitMqTestQueueName);
 
             // Assert
-            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            AssertThatStatusIsOkAndRabbitStoreMessage(result, rabbitMessage);
+        }
+
+        private void AddCurrencyToDatabase(string currencyCode)
+        {
+            var dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
+
+            dbContext.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = currencyCode });
+
+            dbContext.SaveChanges();
         }
 
         private static HttpContent GetCreateWalletRequestContent(string walletCurrencyCode)
@@ -53,13 +72,24 @@ namespace wallet.tests.Integration
             return new StringContent(jsonString, Encoding.UTF8, "application/json");
         }
 
-        private void AddCurrencyToDatabase(string currencyCode)
+        private WalletDtoModel? GetMessageFromQueue(string queueName)
         {
-            var dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<WalletDbContext>();
+            using var connection = containerFixture.ConnectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
 
-            dbContext.Currency.Add(new Entities.CurrencyEntity { Id = Guid.NewGuid(), Code = currencyCode });
+            var result = channel.BasicGet(queueName, true);
+            var content = Encoding.UTF8.GetString(result.Body.ToArray());
 
-            dbContext.SaveChanges();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<WalletDtoModel?>(content);
+        }
+
+        private static void AssertThatStatusIsOkAndRabbitStoreMessage(HttpResponseMessage httpResponse, WalletDtoModel? rabbitMessage)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(rabbitMessage, Is.Not.Null);
+            });
         }
     }
 }

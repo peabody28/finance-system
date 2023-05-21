@@ -6,7 +6,7 @@
 
         public const int RabbitMqPort = 5672;
 
-        public const int RabbitMqStartDelayMs = 10000;
+        public const int RabbitMqStartDelayMs = 15000;
 
         public const int RabbitMqReadMessageDelayMs = 1000;
 

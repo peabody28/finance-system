@@ -15,13 +15,13 @@ namespace wallet.tests.Integration
         [SetUp]
         public void Setup()
         {
-            factory.SetupDatabase();
+            factory?.SetupDatabase();
         }
 
         [TearDown]
         public void Teardown()
         {
-            factory.DeleteDatabase();
+            factory?.DeleteDatabase();
         }
 
         [Test]

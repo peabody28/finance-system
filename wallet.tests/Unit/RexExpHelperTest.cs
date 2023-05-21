@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using wallet.Helpers;
 
-namespace wallet.tests
+namespace wallet.tests.Unit
 {
     public class Tests
     {

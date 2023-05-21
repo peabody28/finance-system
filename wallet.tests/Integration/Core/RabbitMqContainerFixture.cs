@@ -1,5 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using RabbitMQ.Client;
 using wallet.tests.Constants;
 
 namespace wallet.tests.Integration.Core
@@ -25,6 +26,20 @@ namespace wallet.tests.Integration.Core
             Port = Container.GetMappedPublicPort(RabbitMqConstants.RabbitMqPort);
 
             Thread.Sleep(RabbitMqConstants.RabbitMqStartDelayMs);
+        }
+
+        public ConnectionFactory ConnectionFactory => new ConnectionFactory
+        {
+            HostName = HostName,
+            Port = Port
+        };
+
+        public void CreateQueue(string queueName)
+        {
+            using var connection = ConnectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
+
+            channel.QueueDeclare(queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         public void Dispose()

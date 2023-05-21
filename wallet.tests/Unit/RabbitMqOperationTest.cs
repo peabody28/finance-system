@@ -1,61 +1,35 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
-using RabbitMQ.Client;
 using System.Text;
 using wallet.Models.DTO.RabbitMq;
 using wallet.Operations;
 using wallet.tests.Constants;
 using wallet.tests.Integration.Core;
 
-namespace wallet.tests.Integration
+namespace wallet.tests.Unit
 {
     internal class RabbitMqOperationTest
     {
         private RabbitMqContainerFixture containerFixture;
 
-        private ConnectionFactory connectionFactory;
-
         [SetUp]
         public void Setup()
         {
-            StartRabbitMqContainer();
-            connectionFactory = GetRabbitMqConnectionFactory();
-            CreateQueue(RabbitMqConstants.RabbitMqTestQueueName);
-        }
-
-        private void StartRabbitMqContainer()
-        {
             containerFixture = new RabbitMqContainerFixture();
-        }
-
-        private ConnectionFactory GetRabbitMqConnectionFactory()
-        {
-            return new ConnectionFactory
-            {
-                HostName = containerFixture.HostName,
-                Port = containerFixture.Port
-            };
-        }
-
-        private void CreateQueue(string name)
-        {
-            using var connection = connectionFactory.CreateConnection();
-            using var channel = connection.CreateModel();
-
-            channel.QueueDeclare(name, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            containerFixture.CreateQueue(RabbitMqConstants.RabbitMqTestQueueName);
         }
 
         [TearDown]
-        public void TearDown() 
+        public void TearDown()
         {
-            containerFixture.Dispose();
+            containerFixture?.Dispose();
         }
 
         [Test]
-        public void CreateWalletTest()
+        public void SendMessageTest()
         {
             // Arrange
-            var rabbitMqOperation = new RabbitMqOperation(connectionFactory);
+            var rabbitMqOperation = new RabbitMqOperation(containerFixture.ConnectionFactory);
 
             var messageForSend = new WalletDtoModel { WalletNumber = TestWalletConstants.AnyWalletNumber, CurrencyCode = TestCurrencyConstants.AnyCurrencyCode };
 
@@ -69,7 +43,7 @@ namespace wallet.tests.Integration
 
         private WalletDtoModel? GetMessageFromQueue()
         {
-            using var connection = connectionFactory.CreateConnection();
+            using var connection = containerFixture.ConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
 
             var result = channel.BasicGet(RabbitMqConstants.RabbitMqTestQueueName, true);

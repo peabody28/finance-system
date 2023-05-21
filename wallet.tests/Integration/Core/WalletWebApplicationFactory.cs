@@ -16,18 +16,24 @@ namespace wallet.tests.Integration.Core
             UserRole = TestUserConstants.UserRole;
         }
 
-        private void RemoveRabbitMqOperationService(IServiceCollection services)
+        private static void RemoveRabbitMqOperationService(IServiceCollection services)
         {
             ServiceDescriptor item = services.SingleOrDefault((ServiceDescriptor d) => d.ServiceType.Equals(typeof(IRabbitMqOperation)));
             services.Remove(item);
         }
 
-        private void AddRabbitMqOperationService(IServiceCollection services)
+        private static void AddRabbitMqOperationService(IServiceCollection services)
         {
             var mock = new Mock<IRabbitMqOperation>();
             mock.SetupSequence(a => a.SendMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Pass();
 
             services.AddSingleton(mock.Object);
+        }
+
+        protected virtual void PrepareRabbitMq(IServiceCollection services)
+        {
+            RemoveRabbitMqOperationService(services);
+            AddRabbitMqOperationService(services);
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -36,8 +42,7 @@ namespace wallet.tests.Integration.Core
 
             builder.ConfigureServices(delegate (IServiceCollection services)
             {
-                RemoveRabbitMqOperationService(services);
-                AddRabbitMqOperationService(services);
+                PrepareRabbitMq(services);
             });
         }
 
