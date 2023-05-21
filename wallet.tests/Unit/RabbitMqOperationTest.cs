@@ -12,14 +12,14 @@ namespace wallet.tests.Unit
     {
         private RabbitMqContainerFixture containerFixture;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             containerFixture = new RabbitMqContainerFixture();
             containerFixture.CreateQueue(RabbitMqConstants.RabbitMqTestQueueName);
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             containerFixture?.Dispose();

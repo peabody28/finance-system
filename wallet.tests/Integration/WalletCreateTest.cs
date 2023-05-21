@@ -16,13 +16,26 @@ namespace wallet.tests.Integration
 
         private RabbitWalletWebApplicationFactory factory;
 
-        [SetUp]
-        public void Setup()
+        #region [ Setup/Teardown ]
+
+        [OneTimeSetUp]
+        public void PrepareEnvironment()
         {
             containerFixture = new RabbitMqContainerFixture();
             containerFixture.CreateQueue(RabbitMqConstants.RabbitMqTestQueueName);
-
             factory = new RabbitWalletWebApplicationFactory(containerFixture.ConnectionFactory);
+        }
+
+        [OneTimeTearDown]
+        public void ResetEnvironment()
+        {
+            containerFixture?.Dispose();
+            factory?.Dispose();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
             factory.SetupDatabase();
         }
 
@@ -30,9 +43,9 @@ namespace wallet.tests.Integration
         public void TearDown()
         {
             factory?.DeleteDatabase();
-            factory?.Dispose();
-            containerFixture?.Dispose();
         }
+
+        #endregion
 
         [Test]
         public async Task CreateWalletTest()
