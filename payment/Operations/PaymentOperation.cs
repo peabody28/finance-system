@@ -1,4 +1,5 @@
-﻿using payment.Helpers;
+﻿using payment.Enums;
+using payment.Helpers;
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
@@ -30,16 +31,24 @@ namespace payment.Operations
             this.configuration = configuration;
             this.logger = logger;
         }
-        
-        public bool TryCreate(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount)
-        {
-            var payment = paymentRepository.Create(wallet, balanceOperationType, amount);
-            var isPaymentCreated = payment != null;
 
-            if (isPaymentCreated)
+        public IPayment Deposit(IWallet wallet, decimal amount, out string? paymentUrl)
+        {
+            var payment = paymentRepository.Create(wallet, balanceOperationTypeOperation.Credit, amount);
+
+            paymentUrl = null;
+
+            return payment;
+        }
+
+        public IPayment Withdraw(IWallet wallet, decimal amount)
+        {
+            var payment = paymentRepository.Create(wallet, balanceOperationTypeOperation.Debit, amount);
+
+            if (payment != null)
                 SendWalletCreateMessage(payment);
 
-            return isPaymentCreated;
+            return payment;
         }
 
         public bool TryTransfer(IWallet walletFrom, IWallet walletTo, decimal amount)

@@ -4,8 +4,9 @@ namespace payment.Interfaces.Operations
 {
     public interface IPaymentOperation
     {
-        bool TryCreate(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount);
+        IPayment Deposit(IWallet wallet, decimal amount, out string? paymentUrl);
 
+        IPayment Withdraw(IWallet wallet, decimal amount);
         bool TryTransfer(IWallet walletFrom, IWallet walletTo, decimal amount);
     }
 }

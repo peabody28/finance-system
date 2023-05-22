@@ -13,16 +13,13 @@ namespace payment.Controllers
     {
         private readonly IWalletRepository walletRepository;
 
-        private readonly IBalanceOperationTypeRepository balanceOperationTypeRepository;
-
         private readonly IPaymentRepository paymentRepository;
 
         private readonly IPaymentOperation paymentOperation;
 
-        public PaymentController(IWalletRepository walletRepository, IBalanceOperationTypeRepository balanceOperationTypeRepository, IPaymentRepository paymentRepository, IPaymentOperation paymentOperation)
+        public PaymentController(IWalletRepository walletRepository, IPaymentRepository paymentRepository, IPaymentOperation paymentOperation)
         {
             this.walletRepository = walletRepository;
-            this.balanceOperationTypeRepository = balanceOperationTypeRepository;
             this.paymentRepository = paymentRepository;
             this.paymentOperation = paymentOperation;
         }
@@ -41,14 +38,26 @@ namespace payment.Controllers
 
         [Authorize]
         [HttpPost]
-        public HttpResponseMessage Create(PaymentCreateModel model)
+        [Route("withdraw")]
+        public HttpResponseMessage Withdraw(WithdrawModel model)
         {
             var wallet = walletRepository.Get(model.WalletNumber);
-            var balanceOperationType = balanceOperationTypeRepository.Get(model.BalanceOperationTypeCode);
 
-            var isPaymentCreated = paymentOperation.TryCreate(wallet, balanceOperationType, model.Amount);
+            var payment = paymentOperation.Withdraw(wallet, model.Amount);
 
-            return new HttpResponseMessage(isPaymentCreated ? System.Net.HttpStatusCode.Created : System.Net.HttpStatusCode.BadRequest);
+            return new HttpResponseMessage(payment != null ? System.Net.HttpStatusCode.Created : System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("deposit")]
+        public DepositPaymentUrlModel Deposit(DepositModel model)
+        {
+            var wallet = walletRepository.Get(model.WalletNumber);
+
+            var payment = paymentOperation.Deposit(wallet, model.Amount, out var paymentUrl);
+
+            return new DepositPaymentUrlModel { PaymentUrl = paymentUrl };
         }
 
         [Authorize]
