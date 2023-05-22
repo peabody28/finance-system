@@ -34,6 +34,8 @@ namespace payment.Operations
         {
             var payment = paymentRepository.Create(wallet, paymentType, balanceOperationTypeOperation.Credit, amount);
 
+            PaymentCreatedLog(payment);
+
             paymentUrl = null;
 
             return payment;
