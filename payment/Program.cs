@@ -16,6 +16,7 @@ using System.Text;
 using RabbitMQ.Client;
 using payment.Models;
 using Microsoft.OpenApi.Models;
+using payment.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,8 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Payment API", Version = "v1" });
 });
+
+builder.Services.AddHostedService<WalletCreateActionListener>();
 
 var app = builder.Build();
 
