@@ -12,6 +12,10 @@
 
         IBalanceOperationType BalanceOperationType { get; set; }
 
+        Guid PaymentTypeFk { get; set; }
+
+        IPaymentType PaymentType { get; set; }
+
         decimal Amount { get; set; }
 
         DateTime Created { get; set; }

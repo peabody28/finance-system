@@ -4,6 +4,9 @@ namespace payment.Models.Payment
 {
     public class PaymentModelBase
     {
+        [JsonProperty("paymentTypeCode")]
+        public string PaymentTypeCode { get; set; }
+
         [JsonProperty("walletNumber")]
         public string WalletNumber { get; set; }
 

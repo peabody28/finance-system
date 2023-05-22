@@ -19,6 +19,11 @@ namespace payment.Entities
 
         public IBalanceOperationType BalanceOperationType { get; set; }
 
+        [ForeignKey("PaymentType")]
+        public Guid PaymentTypeFk { get; set; }
+
+        public IPaymentType PaymentType { get; set; }
+
         public decimal Amount { get; set; }
 
         public DateTime Created { get; set; }

@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
@@ -19,7 +20,8 @@ namespace payment.tests.Unit
             var undefinedCurrencyWallet = UndefinedCurrencyWalletStub();
             var usdWallet = WalletStub(CurrencyConstants.USD);
 
-            var paymentOperation = new PaymentOperation(null!, null!, currencyRateOperationMock.Object, null!, null!, null!);
+            var paymentOperation = new PaymentOperation(It.IsAny<IPaymentRepository>(), It.IsAny<IBalanceOperationTypeOperation>(),It.IsAny<IPaymentTypeOperation>(),
+                currencyRateOperationMock.Object, It.IsAny<IRabbitMqOperation>(), It.IsAny<Microsoft.Extensions.Configuration.IConfiguration>(), It.IsAny<ILogger<PaymentOperation>>());
 
             // Act && Assert
             Assert.Throws<ArgumentException>(() => paymentOperation.TryTransfer(undefinedCurrencyWallet, usdWallet, RandomConstants.AnyAmount));
@@ -36,7 +38,7 @@ namespace payment.tests.Unit
             var walletFrom = WalletStub(CurrencyConstants.USD);
             var walletTo = WalletStub(CurrencyConstants.EUR);
 
-            var paymentOperation = new PaymentOperation(PaymentRepositoryMock(), BalanceOperationTypeOperaitionStub(),
+            var paymentOperation = new PaymentOperation(PaymentRepositoryMock(), BalanceOperationTypeOperaitionStub(), PaymentTypeOperationStub(),
                 currencyRateOperationMock.Object, null!, null!, null!);
 
             // Act
@@ -74,6 +76,15 @@ namespace payment.tests.Unit
             return balanceOperationTypeOperationStub.Object;
         }
 
+        private static IPaymentTypeOperation PaymentTypeOperationStub()
+        {
+            var paymentTypeOperationStub = new Mock<IPaymentTypeOperation>();
+            paymentTypeOperationStub.Setup(a => a.Transfer).Returns((IPaymentType?)null);
+            paymentTypeOperationStub.Setup(a => a.CustomPay).Returns((IPaymentType?)null);
+
+            return paymentTypeOperationStub.Object;
+        }
+
         #endregion
 
         #region [ Mock Members ]
@@ -108,7 +119,7 @@ namespace payment.tests.Unit
 
         private static void MockPaymentCreating(Mock<IPaymentRepository> mock)
         {
-            mock.Setup(a => a.Create(It.IsAny<IWallet>(), It.IsAny<IBalanceOperationType>(), It.IsAny<decimal>())).Returns(It.IsNotNull<IPayment>());
+            mock.Setup(a => a.Create(It.IsAny<IWallet>(), It.IsAny<IPaymentType>(), It.IsAny<IBalanceOperationType>(), It.IsAny<decimal>())).Returns(It.IsNotNull<IPayment>());
         }
 
         #endregion

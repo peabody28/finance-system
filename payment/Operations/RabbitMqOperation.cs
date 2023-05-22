@@ -23,7 +23,7 @@ namespace payment.Operations
         /// <param name="queue"></param>
         /// <param name="exchange"></param>
         /// <param name="routingKey"></param>
-        public void SendMessage<T>(T data, string queue, string exchange = "", string? routingKey = null)
+        public void SendMessage<T>(T data, string? queue = null, string exchange = "", string? routingKey = null)
         {
             if (string.IsNullOrWhiteSpace(routingKey))
                 routingKey = queue;

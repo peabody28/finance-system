@@ -18,6 +18,8 @@ namespace payment.Repositories
 
         public DbSet<BalanceOperationTypeEntity> BalanceOperationType { get; set; }
 
+        public DbSet<PaymentTypeEntity> PaymentType { get; set; }
+
         public DbSet<PaymentEntity> Payment { get; set; }
 
         public DbSet<ConfigurationEntity> Configuration { get; set; }
@@ -38,6 +40,9 @@ namespace payment.Repositories
 
             modelBuilder.Entity<PaymentEntity>()
                 .HasOne(p => p.Wallet as WalletEntity);
+
+            modelBuilder.Entity<PaymentEntity>()
+                .HasOne(p => p.PaymentType as PaymentTypeEntity);
 
             modelBuilder.Entity<WalletEntity>()
                 .HasOne(p => p.Currency as CurrencyEntity);

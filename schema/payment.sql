@@ -43,3 +43,14 @@ CREATE TABLE currency (
 );
 
 ALTER TABLE wallet ADD COLUMN CurrencyFk uuid REFERENCES currency(Id);
+
+-- 22.05.2023
+CREATE TABLE paymentType (
+	Id uuid PRIMARY KEY,
+	Code string NOT NULL
+);
+INSERT OR IGNORE INTO paymentType (Id, Code) VALUES ('4352F3B4-2981-474F-A466-2A07029EEA55', 'Transfer');
+INSERT OR IGNORE INTO paymentType (Id, Code) VALUES ('336028D9-DEE0-4C8D-ADED-B9440D543AC8', 'CustomPay');
+
+ALTER TABLE payment ADD PaymentTypeFk uuid REFERENCES paymentType(Id);
+

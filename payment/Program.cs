@@ -59,12 +59,14 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
 builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+builder.Services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
 
 builder.Services.AddTransient<IBalanceOperationType, BalanceOperationTypeEntity>();
 builder.Services.AddTransient<IPayment, PaymentEntity>();
 builder.Services.AddTransient<IWallet, WalletEntity>();
 builder.Services.AddTransient<payment.Interfaces.Entities.IConfiguration, ConfigurationEntity>();
 builder.Services.AddTransient<ICurrency, CurrencyEntity>();
+builder.Services.AddTransient<IPaymentType, PaymentTypeEntity>();
 
 builder.Services.AddScoped<ICurrencyApiOperation, CurrencyApiOperation>();
 
@@ -73,6 +75,7 @@ builder.Services.AddScoped<IBalanceOperationTypeOperation, BalanceOperationTypeO
 builder.Services.AddScoped<IPaymentOperation, PaymentOperation>();
 builder.Services.AddScoped<ICurrencyRateOperation, CurrencyRateOperation>();
 builder.Services.AddScoped<IBalanceOperation, BalanceOperation>();
+builder.Services.AddScoped<IPaymentTypeOperation, PaymentTypeOperation>();
 
 builder.Services.AddScoped<IRabbitMqOperation, RabbitMqOperation>();
 

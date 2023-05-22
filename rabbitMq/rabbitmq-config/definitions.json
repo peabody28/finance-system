@@ -1,9 +1,11 @@
 {
-  "users": [{
-    "name": "peabody28",
-    "password": "1234",
-    "tags": "administrator"
-  }],
+  "users": [
+    {
+      "name": "peabody28",
+      "password": "1234",
+      "tags": "administrator"
+    }
+  ],
   "vhosts": [
     {
       "name": "pbdhost"
@@ -64,10 +66,43 @@
       "arguments": {
         "x-queue-type": "classic"
       }
+    },
+    {
+      "name": "custompay-payment-create",
+      "vhost": "pbdhost",
+      "durable": false,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "custompay-payment-create",
+      "vhost": "pbdhost-dev",
+      "durable": false,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
     }
   ],
   "exchanges": [
+
   ],
   "bindings": [
+    {
+      "source": "amq.direct",
+      "vhost": "pbdhost-dev",
+      "destination": "custompay-wallet-create",
+      "destination_type": "queue",
+      "routing_key": "CustomPay"
+    },
+    {
+      "source": "amq.direct",
+      "vhost": "pbdhost",
+      "destination": "custompay-wallet-create",
+      "destination_type": "queue",
+      "routing_key": "CustomPay"
+    }
   ]
 }

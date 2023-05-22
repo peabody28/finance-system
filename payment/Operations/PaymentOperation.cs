@@ -1,5 +1,4 @@
-﻿using payment.Enums;
-using payment.Helpers;
+﻿using payment.Helpers;
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
@@ -13,6 +12,8 @@ namespace payment.Operations
 
         private readonly IBalanceOperationTypeOperation balanceOperationTypeOperation;
 
+        private readonly IPaymentTypeOperation paymentTypeOperation;
+
         private readonly ICurrencyRateOperation currencyRateOperation;
 
         private readonly IRabbitMqOperation rabbitMqOperation;
@@ -21,29 +22,30 @@ namespace payment.Operations
 
         private readonly ILogger<PaymentOperation> logger;
 
-        public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation,
+        public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation, IPaymentTypeOperation paymentTypeOperation,
             ICurrencyRateOperation currencyRateOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration, ILogger<PaymentOperation> logger)
         {
             this.paymentRepository = paymentRepository;
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
+            this.paymentTypeOperation = paymentTypeOperation;
             this.currencyRateOperation = currencyRateOperation;
             this.rabbitMqOperation = rabbitMqOperation;
             this.configuration = configuration;
             this.logger = logger;
         }
 
-        public IPayment Deposit(IWallet wallet, decimal amount, out string? paymentUrl)
+        public IPayment Deposit(IWallet wallet, IPaymentType paymentType, decimal amount, out string? paymentUrl)
         {
-            var payment = paymentRepository.Create(wallet, balanceOperationTypeOperation.Credit, amount);
+            var payment = paymentRepository.Create(wallet, paymentType, balanceOperationTypeOperation.Credit, amount);
 
             paymentUrl = null;
 
             return payment;
         }
 
-        public IPayment Withdraw(IWallet wallet, decimal amount)
+        public IPayment Withdraw(IWallet wallet, IPaymentType paymentType, decimal amount)
         {
-            var payment = paymentRepository.Create(wallet, balanceOperationTypeOperation.Debit, amount);
+            var payment = paymentRepository.Create(wallet, paymentType, balanceOperationTypeOperation.Debit, amount);
 
             if (payment != null)
                 SendWalletCreateMessage(payment);
@@ -60,11 +62,12 @@ namespace payment.Operations
 
             try
             {
+                var paymentType = paymentTypeOperation.Transfer;
                 var creditAmount = AmountHelper.Compute(amount, currencyRate.Value);
                 paymentRepository.BeginTransaction();
-                paymentRepository.Create(walletFrom, balanceOperationTypeOperation.Debit, amount);
+                paymentRepository.Create(walletFrom, paymentType, balanceOperationTypeOperation.Debit, amount);
 
-                paymentRepository.Create(walletTo, balanceOperationTypeOperation.Credit, creditAmount);
+                paymentRepository.Create(walletTo, paymentType, balanceOperationTypeOperation.Credit, creditAmount);
                 paymentRepository.CommitTransaction();
                 return true;
             }
@@ -77,13 +80,12 @@ namespace payment.Operations
 
         private void SendWalletCreateMessage(IPayment payment)
         {
-            logger.LogInformation("Payment created: paymentId: {id}, walletNumber: {walletNumber}, amount: {amount}, currencyCode: {currencyCode}",
-                    payment.Id, payment.Wallet.Number, payment.Amount, payment.Wallet.Currency.Code);
+            logger.LogInformation("Payment created: paymentId: {id}, walletNumber: {walletNumber}, balanceOperationType: {balanceOperationType} amount: {amount}, currencyCode: {currencyCode}",
+                    payment.Id, payment.Wallet.Number, payment.BalanceOperationType.Code, payment.Amount, payment.Wallet.Currency.Code);
 
             var paymentCreatedMessage = PaymentModelBuilder.BuildCreateMessage(payment);
-            var paymentCreateQueueName = configuration.GetValue<string>("RabbitMq:Queue:PaymentCreate");
 
-            rabbitMqOperation.SendMessage(paymentCreatedMessage, paymentCreateQueueName);
+            rabbitMqOperation.SendMessage(paymentCreatedMessage, exchange: "amq.direct", routingKey: payment.PaymentType.Code);
         }
     }
 }

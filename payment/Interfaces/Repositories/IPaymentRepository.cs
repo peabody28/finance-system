@@ -4,7 +4,7 @@ namespace payment.Interfaces.Repositories
 {
     public interface IPaymentRepository : IRepository
     {
-        IPayment Create(IWallet wallet, IBalanceOperationType balanceOperationType, decimal amount);
+        IPayment Create(IWallet wallet, IPaymentType paymentType, IBalanceOperationType balanceOperationType, decimal amount);
 
         IEnumerable<IPayment> Get(IWallet? wallet = null, IBalanceOperationType? balanceOperationType = null);
     }
