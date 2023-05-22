@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using user.Helper;
+using user.tests.Constants;
 
 namespace user.tests
 {
@@ -29,26 +30,26 @@ namespace user.tests
         public void EmptyTest()
         {
             // Arrange
-            string data = "";
+            string data = string.Empty;
 
             // Act
             var hash = MD5Helper.Hash(data);
 
             // Assert
-            Assert.AreEqual(hash, "D41D8CD98F00B204E9800998ECF8427E");
+            Assert.AreEqual(hash, Md5HashConstants.EmptyStringHash);
         }
 
         [Test]
         public void WhiteSpaceTest()
         {
             // Arrange
-            string data = " ";
+            string data = StringConstants.WhiteSpace;
 
             // Act
             var hash = MD5Helper.Hash(data);
 
             // Assert
-            Assert.AreEqual(hash, "7215EE9C7D9DC229D2921A40E899EC5F");
+            Assert.AreEqual(hash, Md5HashConstants.WhiteSpaceHash);
         }
 
         [Test]
@@ -61,7 +62,7 @@ namespace user.tests
             var hash = MD5Helper.Hash(data);
 
             // Assert
-            Assert.AreEqual(hash, "5F4DCC3B5AA765D61D8327DEB882CF99");
+            Assert.AreEqual(hash, Md5HashConstants.PasswordStringHash);
         }
     }
 }

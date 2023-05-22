@@ -1,8 +1,8 @@
-﻿namespace wallet.tests.Integration.Core.Constants
+﻿namespace currency.tests.Constants
 {
     internal class TestUserConstants
     {
         public const string UserName = "Test user";
-        public const string UserRole = "MS";
+        public const string UserRole = "Default";
     }
 }
