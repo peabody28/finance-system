@@ -41,25 +41,7 @@
       }
     },
     {
-      "name": "payment-create",
-      "vhost": "pbdhost",
-      "durable": false,
-      "auto_delete": false,
-      "arguments": {
-        "x-queue-type": "classic"
-      }
-    },
-    {
       "name": "wallet-create",
-      "vhost": "pbdhost-dev",
-      "durable": false,
-      "auto_delete": false,
-      "arguments": {
-        "x-queue-type": "classic"
-      }
-    },
-    {
-      "name": "payment-create",
       "vhost": "pbdhost-dev",
       "durable": false,
       "auto_delete": false,
@@ -93,14 +75,14 @@
     {
       "source": "amq.direct",
       "vhost": "pbdhost-dev",
-      "destination": "custompay-wallet-create",
+      "destination": "custompay-payment-create",
       "destination_type": "queue",
       "routing_key": "CustomPay"
     },
     {
       "source": "amq.direct",
       "vhost": "pbdhost",
-      "destination": "custompay-wallet-create",
+      "destination": "custompay-payment-create",
       "destination_type": "queue",
       "routing_key": "CustomPay"
     }
