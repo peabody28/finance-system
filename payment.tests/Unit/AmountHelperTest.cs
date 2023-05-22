@@ -1,15 +1,9 @@
 ﻿using payment.Helpers;
 
-namespace payment.tests
+namespace payment.tests.Unit
 {
     internal class AmountHelperTest
     {
-        [SetUp]
-        public void Setup()
-        {
-            
-        }
-
         [Test]
         public void TestGreaterThanZero([Values(15)] decimal amount, [Values(0.6)] decimal rate)
         {

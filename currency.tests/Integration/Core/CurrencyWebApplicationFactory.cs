@@ -1,6 +1,7 @@
-﻿using currency.tests.Integration.Core.Constants;
-using Testing.Integration.Helper.Sqlite;
+﻿using Testing.Integration.Helper.Sqlite;
 using currency.Repositories;
+using Microsoft.Extensions.DependencyInjection;
+using currency.tests.Constants;
 
 namespace currency.tests.Integration.Core
 {
@@ -10,6 +11,23 @@ namespace currency.tests.Integration.Core
         {
             UserName = TestUserConstants.UserName;
             UserRole = TestUserConstants.UserRole;
+        }
+
+        public CurrencyDbContext GetDbContext()
+        {
+            return Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
+        }
+
+        public void SetupDatabase()
+        {
+            var dbContext = Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
+            dbContext.Database.EnsureCreated();
+        }
+
+        public void DeleteDatabase()
+        {
+            var dbContext = Services.CreateScope().ServiceProvider.GetRequiredService<CurrencyDbContext>();
+            dbContext.Database.EnsureDeleted();
         }
     }
 }

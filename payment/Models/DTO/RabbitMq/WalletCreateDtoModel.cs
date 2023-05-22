@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace payment.worker.Models.DTO
+namespace payment.Models.DTO.RabbitMq
 {
     public class WalletCreateDtoModel
     {

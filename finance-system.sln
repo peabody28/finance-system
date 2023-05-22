@@ -38,8 +38,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "custompay", "custompay", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payment.system.custompay.worker", "payment.system.custompay.worker\payment.system.custompay.worker.csproj", "{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payment.worker", "payment.worker\payment.worker.csproj", "{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "elk", "elk", "{593E2126-856D-45CB-B687-D4CC3C11F595}"
 	ProjectSection(SolutionItems) = preProject
 		elk\docker-compose.yml = elk\docker-compose.yml
@@ -100,10 +98,6 @@ Global
 		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A3686BC-7FD9-49E4-AD47-FE6453A9E98F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42D1E36F-8C96-4381-AB1D-96FAAFEBCC08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,18 +2,17 @@
 using RabbitMQ.Client;
 using System.Text;
 using wallet.Interfaces.Operations;
-using wallet.Models;
 
 namespace wallet.Operations
 {
     public class RabbitMqOperation : IRabbitMqOperation
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly ConnectionFactory connectionFactory;
 
-        public RabbitMqOperation(IServiceProvider serviceProvider)
+        public RabbitMqOperation(ConnectionFactory connectionFactory)
         {
-            this.serviceProvider = serviceProvider;
-        }
+            this.connectionFactory = connectionFactory;
+        }   
 
         /// <summary>
         /// Send message to an existing queue
@@ -28,14 +27,15 @@ namespace wallet.Operations
             if (string.IsNullOrWhiteSpace(routingKey))
                 routingKey = queue;
 
-            using var connection = serviceProvider.GetRequiredService<RabbitMqConnection>();
+            using var connection = connectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
 
-            var props = CreateDefaultProperties(connection.channel);
+            var props = CreateDefaultProperties(channel);
 
-            connection.channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: props, body: GetBody(data));
+            channel.BasicPublish(exchange: exchange, routingKey: routingKey, basicProperties: props, body: GetBody(data));
         }
 
-        private byte[] GetBody<T>(T data)
+        private static byte[] GetBody<T>(T data)
         {
             var message = JsonConvert.SerializeObject(data, Formatting.Indented);
             return Encoding.UTF8.GetBytes(message);

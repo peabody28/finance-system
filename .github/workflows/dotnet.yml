@@ -1,7 +1,7 @@
 name: Application Deploy
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "tests" ]
   pull_request:
     branches: [ "master" ]
 jobs:
@@ -17,12 +17,18 @@ jobs:
         run: dotnet restore -s "http://nuget.peabody28.com/v3/index.json" -s "https://api.nuget.org/v3/index.json"
       - name: Build
         run: dotnet build --no-restore
+      - name: Setup Docker
+        uses: docker-practice/actions-setup-docker@master
+        timeout-minutes: 12
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: |
+            echo "docker.host=unix:///var/run/docker.sock" > ~/.testcontainers.properties
+            dotnet test --no-build --verbosity normal
         
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Branch name
         run: echo "${{ github.head_ref || github.ref_name }}"
