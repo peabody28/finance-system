@@ -21,7 +21,7 @@ namespace payment.tests.Unit
             var usdWallet = WalletStub(CurrencyConstants.USD);
 
             var paymentOperation = new PaymentOperation(It.IsAny<IPaymentRepository>(), It.IsAny<IBalanceOperationTypeOperation>(),It.IsAny<IPaymentTypeOperation>(),
-                currencyRateOperationMock.Object, It.IsAny<IRabbitMqOperation>(), It.IsAny<Microsoft.Extensions.Configuration.IConfiguration>(), It.IsAny<ILogger<PaymentOperation>>());
+                currencyRateOperationMock.Object, It.IsAny<IRabbitMqOperation>(), It.IsAny<ILogger<PaymentOperation>>());
 
             // Act && Assert
             Assert.Throws<ArgumentException>(() => paymentOperation.TryTransfer(undefinedCurrencyWallet, usdWallet, RandomConstants.AnyAmount));
@@ -39,7 +39,7 @@ namespace payment.tests.Unit
             var walletTo = WalletStub(CurrencyConstants.EUR);
 
             var paymentOperation = new PaymentOperation(PaymentRepositoryMock(), BalanceOperationTypeOperaitionStub(), PaymentTypeOperationStub(),
-                currencyRateOperationMock.Object, null!, null!, null!);
+                currencyRateOperationMock.Object, It.IsAny<IRabbitMqOperation>(), It.IsAny<ILogger<PaymentOperation>>());
 
             // Act
             var result = paymentOperation.TryTransfer(walletFrom, walletTo, RandomConstants.AnyAmount);
