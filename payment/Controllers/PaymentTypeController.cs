@@ -17,6 +17,7 @@ namespace payment.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public IEnumerable<PaymentTypeModel> Get()
         {
             var paymentTypes = paymentTypeRepository.Get();

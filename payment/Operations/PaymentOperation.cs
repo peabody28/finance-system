@@ -2,7 +2,6 @@
 using payment.Interfaces.Entities;
 using payment.Interfaces.Operations;
 using payment.Interfaces.Repositories;
-using payment.ModelBuilders;
 
 namespace payment.Operations
 {
@@ -18,19 +17,16 @@ namespace payment.Operations
 
         private readonly IRabbitMqOperation rabbitMqOperation;
 
-        private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
-
         private readonly ILogger<PaymentOperation> logger;
 
         public PaymentOperation(IPaymentRepository paymentRepository, IBalanceOperationTypeOperation balanceOperationTypeOperation, IPaymentTypeOperation paymentTypeOperation,
-            ICurrencyRateOperation currencyRateOperation, IRabbitMqOperation rabbitMqOperation, Microsoft.Extensions.Configuration.IConfiguration configuration, ILogger<PaymentOperation> logger)
+            ICurrencyRateOperation currencyRateOperation, IRabbitMqOperation rabbitMqOperation, ILogger<PaymentOperation> logger)
         {
             this.paymentRepository = paymentRepository;
             this.balanceOperationTypeOperation = balanceOperationTypeOperation;
             this.paymentTypeOperation = paymentTypeOperation;
             this.currencyRateOperation = currencyRateOperation;
             this.rabbitMqOperation = rabbitMqOperation;
-            this.configuration = configuration;
             this.logger = logger;
         }
 
@@ -47,8 +43,9 @@ namespace payment.Operations
         {
             var payment = paymentRepository.Create(wallet, paymentType, balanceOperationTypeOperation.Debit, amount);
 
-            if (payment != null)
-                SendWalletCreateMessage(payment);
+            PaymentCreatedLog(payment);
+
+            rabbitMqOperation.SendPaymentCreateMessage(payment);
 
             return payment;
         }
@@ -78,14 +75,10 @@ namespace payment.Operations
             }
         }
 
-        private void SendWalletCreateMessage(IPayment payment)
+        private void PaymentCreatedLog(IPayment payment)
         {
             logger.LogInformation("Payment created: paymentId: {id}, walletNumber: {walletNumber}, balanceOperationType: {balanceOperationType} amount: {amount}, currencyCode: {currencyCode}",
                     payment.Id, payment.Wallet.Number, payment.BalanceOperationType.Code, payment.Amount, payment.Wallet.Currency.Code);
-
-            var paymentCreatedMessage = PaymentModelBuilder.BuildCreateMessage(payment);
-
-            rabbitMqOperation.SendMessage(paymentCreatedMessage, exchange: "amq.direct", routingKey: payment.PaymentType.Code);
         }
     }
 }
